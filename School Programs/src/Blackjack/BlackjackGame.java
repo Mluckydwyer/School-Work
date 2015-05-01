@@ -85,9 +85,9 @@ public class BlackjackGame {
 		System.out.println("The dealer is showing a(n) " + cardDisplayName[index + 1] + "\n");
 		index += 1;
 		
-		do{
+		//do{
 		System.out.println("What would you like to do:");
 		
-		} while ();
+		//} while ();
 	}
 }
