@@ -16,6 +16,9 @@ public class BlackjackGame {
 	public int gamesWon = 0;
 	public int totalGames = 0;
 	public int cardNum = 52;
+	public int selection;
+
+	public boolean textInput;
 
 	public int[] cardValue;
 	public String[] suits;
@@ -37,7 +40,6 @@ public class BlackjackGame {
 		suits[2] = "Hearts";
 		suits[3] = "Spades";
 		suits[4] = "Diamonds";
-
 	}
 
 	public void shuffle() {
@@ -51,13 +53,11 @@ public class BlackjackGame {
 					for (int x = 1; x < i; x++) {
 						if (cardValue[i] == cardValue[x] && cardSuit[i] == cardSuit[x]) {
 							OPEN = false;
-						}
-						else {
+						} else {
 							OPEN = true;
 						}
 					}
-				} 
-				else {
+				} else {
 					OPEN = true;
 				}
 			} while (!OPEN);
@@ -90,19 +90,41 @@ public class BlackjackGame {
 			}
 
 		}
+	}
 
-		boolean BET = true;
+	public void mainMenu() {
+		boolean REDO;
+
 		do {
-
+			REDO = true;
 			try {
-				System.out.println("\fWelcome to Blackjack, What would you like to set the minimum bet at?");
-				minBet = keyboardInput.nextInt();
+				System.out.println("Welcome to Blackjack, please select an option from the menu below");
+				System.out.println("[1]-Play Blackjack");
+				System.out.println("[2]-Settings");
+				System.out.println("[3]-Player Stats");
+				System.out.println("[4]-Quit");
+
+				selection = keyboardInput.nextInt();
+				REDO = false;
 				break;
 			} catch (Exception e) {
-				System.out.println("That is not a vaild minimum bet");
+				System.out.println("That is not a vaild selection");
 			}
-		} while (BET);
+		} while (REDO);
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+	}
 
+	public void play() {
 		System.out.println("\fWelcome to the Blackjack Table. Here, the minimum bet is $" + minBet);
 		System.out.println("Your Info:  $" + money + "  Wins: " + gamesWon + "/" + totalGames + "\n");
 		System.out.println("You are dealed a(n) " + cardDisplayName[index + 1] + " & a(n) " + cardDisplayName[index + 2]);
@@ -112,9 +134,9 @@ public class BlackjackGame {
 		System.out.println("The dealer is showing a(n) " + cardDisplayName[index + 1] + "\n");
 		index += 1;
 
-		// do{
 		System.out.println("What would you like to do:");
-
-		// } while ();
+		System.out.println("[1]-Hit");
+		System.out.println("[2]-");
+		System.out.println("[3]-");
 	}
 }
