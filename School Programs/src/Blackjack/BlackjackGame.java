@@ -1,9 +1,13 @@
 package Blackjack;
 
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.util.Random;
 import java.util.Scanner;
 
-public class BlackjackGame {
+public class BlackjackGame implements KeyListener, FocusListener {
 
 	public static Scanner keyboardInput;
 	public static Random randomValue;
@@ -20,26 +24,21 @@ public class BlackjackGame {
 
 	public boolean textInput;
 
-	public int[] cardValue;
-	public String[] suits;
-	public String[] cardSuit;
-	public String[] cardDisplayName;
+	public int[] cardValue = new int[game.cardNum + 1];
+	public String[] suits = new String[5];
+	public String[] cardSuit = new String[game.cardNum + 1];
+	public String[] cardDisplayName = new String[game.cardNum + 1];
 
 	public static void main(String[] args) {
 
 		keyboardInput = new Scanner(System.in);
 		randomValue = new Random();
 		game = new BlackjackGame();
-
-		int[] cardValue = new int[game.cardNum + 1];
-		String[] suits = new String[5];
-		String[] cardSuit = new String[game.cardNum + 1];
-		String[] cardDisplayName = new String[game.cardNum + 1];
-
+		
 		game.suits[1] = "Clubs";
-		suits[2] = "Hearts";
-		suits[3] = "Spades";
-		suits[4] = "Diamonds";
+		game.suits[2] = "Hearts";
+		game.suits[3] = "Spades";
+		game.suits[4] = "Diamonds";
 	}
 
 	public void shuffle() {
@@ -111,17 +110,7 @@ public class BlackjackGame {
 				System.out.println("That is not a vaild selection");
 			}
 		} while (REDO);
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
+
 	}
 
 	public void play() {
@@ -138,5 +127,48 @@ public class BlackjackGame {
 		System.out.println("[1]-Hit");
 		System.out.println("[2]-");
 		System.out.println("[3]-");
+	}
+}
+	
+	
+	
+class InputHandler implements KeyListener, FocusListener{	
+	
+	public boolean[] key = new boolean[68836];
+	
+	@Override
+	public void focusGained(FocusEvent e) {
+
+	}
+
+	@Override
+	public void focusLost(FocusEvent e) {
+		for (int i = 0; i < key.length; i++) {
+			key[i] = false;
+		}
+	}
+
+	@Override
+	public void keyPressed(KeyEvent e) {
+		int keyCode = e.getKeyCode();
+		if (keyCode > 0 && keyCode < key.length) {
+			key[keyCode] = false;
+		}
+	}
+
+	@Override
+	public void keyReleased(KeyEvent e) {
+		int keyCode = e.getKeyCode();
+		if (keyCode > 0 && keyCode < key.length) {
+			key[keyCode] = false;
+		}
+	}
+
+	@Override
+	public void keyTyped(KeyEvent e) {
+		int keyCode = e.getKeyCode();
+		if (keyCode > 0 && keyCode < key.length) {
+			key[keyCode] = false;
+		}
 	}
 }
