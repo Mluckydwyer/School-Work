@@ -7,7 +7,7 @@ import java.awt.event.KeyListener;
 import java.util.Random;
 import java.util.Scanner;
 
-public class BlackjackGame implements KeyListener, FocusListener {
+public class BlackjackGame {
 
 	public static Scanner keyboardInput;
 	public static Random randomValue;
@@ -24,21 +24,28 @@ public class BlackjackGame implements KeyListener, FocusListener {
 
 	public boolean textInput;
 
-	public int[] cardValue = new int[game.cardNum + 1];
-	public String[] suits = new String[5];
-	public String[] cardSuit = new String[game.cardNum + 1];
-	public String[] cardDisplayName = new String[game.cardNum + 1];
-
-	public static void main(String[] args) {
-
+	public int[] cardValue;
+	public String[] suits;
+	public String[] cardSuit;
+	public String[] cardDisplayName;
+	
+	public BlackjackGame() {
 		keyboardInput = new Scanner(System.in);
 		randomValue = new Random();
 		game = new BlackjackGame();
+		cardValue = new int[game.cardNum + 1];
+		suits = new String[5];
+		cardSuit = new String[game.cardNum + 1];
+		cardDisplayName = new String[game.cardNum + 1];
 		
 		game.suits[1] = "Clubs";
 		game.suits[2] = "Hearts";
 		game.suits[3] = "Spades";
 		game.suits[4] = "Diamonds";
+	}
+
+	public static void main(String[] args) {
+		
 	}
 
 	public void shuffle() {
@@ -129,13 +136,11 @@ public class BlackjackGame implements KeyListener, FocusListener {
 		System.out.println("[3]-");
 	}
 }
-	
-	
-	
-class InputHandler implements KeyListener, FocusListener{	
-	
+
+class InputHandler implements KeyListener, FocusListener {
+
 	public boolean[] key = new boolean[68836];
-	
+
 	@Override
 	public void focusGained(FocusEvent e) {
 
