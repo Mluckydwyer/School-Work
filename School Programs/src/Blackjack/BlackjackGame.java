@@ -7,28 +7,27 @@ import java.awt.event.KeyListener;
 import java.util.Random;
 import java.util.Scanner;
 
-public class BlackjackGame {
+public class BlackjackGame implements Runnable {
 
-	public static Scanner keyboardInput;
-	public static Random randomValue;
-	public static BlackjackGame game;
+	private static Scanner keyboardInput;
+	private static Random randomValue;
+	private static BlackjackGame game;
 
-	public int startMoney = 10000;
-	public int money = startMoney;
-	public int minBet = -999;
-	public int index = 0;
-	public int gamesWon = 0;
-	public int totalGames = 0;
-	public int cardNum = 52;
-	public int selection;
+	private int startMoney = 10000;
+	private int money = startMoney;
+	private int minBet = -999;
+	private int index = 0;
+	private int gamesWon = 0;
+	private int totalGames = 0;
+	private int cardNum = 52;
 
-	public boolean textInput;
+	private boolean textInput;
 
-	public int[] cardValue;
-	public String[] suits;
-	public String[] cardSuit;
-	public String[] cardDisplayName;
-	
+	private int[] cardValue;
+	private String[] suits;
+	private String[] cardSuit;
+	private String[] cardDisplayName;
+
 	public BlackjackGame() {
 		keyboardInput = new Scanner(System.in);
 		randomValue = new Random();
@@ -37,7 +36,7 @@ public class BlackjackGame {
 		suits = new String[5];
 		cardSuit = new String[game.cardNum + 1];
 		cardDisplayName = new String[game.cardNum + 1];
-		
+
 		game.suits[1] = "Clubs";
 		game.suits[2] = "Hearts";
 		game.suits[3] = "Spades";
@@ -45,7 +44,14 @@ public class BlackjackGame {
 	}
 
 	public static void main(String[] args) {
-		
+		game.shuffle();
+		game.setDisplayNames();
+		game.mainMenu();
+	}
+
+	@Override
+	public void run() {
+
 	}
 
 	public void shuffle() {
@@ -94,15 +100,15 @@ public class BlackjackGame {
 				cardDisplayName[i] = cardValue[i] + " of " + cardSuit[i];
 				break;
 			}
-
 		}
 	}
 
 	public void mainMenu() {
 		boolean REDO;
+		int selection = 0;
 
 		do {
-			REDO = true;
+			REDO = false;
 			try {
 				System.out.println("Welcome to Blackjack, please select an option from the menu below");
 				System.out.println("[1]-Play Blackjack");
@@ -111,16 +117,46 @@ public class BlackjackGame {
 				System.out.println("[4]-Quit");
 
 				selection = keyboardInput.nextInt();
-				REDO = false;
+
+				switch (selection) {
+				case 1:
+					game.play();
+					break;
+				case 2:
+					game.settings();
+					break;
+				case 3:
+					game.playerStats();
+					break;
+				case 4:
+					game.quit();
+					break;
+				default:
+					System.out.println("An Error Has Occured, please try again");
+					REDO = true;
+				}
 				break;
 			} catch (Exception e) {
 				System.out.println("That is not a vaild selection");
+				REDO = true;
 			}
 		} while (REDO);
+	}
+
+	private void playerStats() {
+		// TODO Auto-generated method stub
+
+	}
+
+	private void settings() {
+		// TODO Auto-generated method stub
 
 	}
 
 	public void play() {
+		int selection;
+		boolean REDO = 0;
+
 		System.out.println("\fWelcome to the Blackjack Table. Here, the minimum bet is $" + minBet);
 		System.out.println("Your Info:  $" + money + "  Wins: " + gamesWon + "/" + totalGames + "\n");
 		System.out.println("You are dealed a(n) " + cardDisplayName[index + 1] + " & a(n) " + cardDisplayName[index + 2]);
@@ -130,13 +166,50 @@ public class BlackjackGame {
 		System.out.println("The dealer is showing a(n) " + cardDisplayName[index + 1] + "\n");
 		index += 1;
 
-		System.out.println("What would you like to do:");
-		System.out.println("[1]-Hit");
-		System.out.println("[2]-");
-		System.out.println("[3]-");
+		do {
+			try {
+				REDO = false;
+				System.out.println("What would you like to do:");
+				System.out.println("[1]-Hit");
+				System.out.println("[2]-Stay");
+				selection = keyboardInput.nextInt();
+			} catch (Exception e) {
+				System.out.println("That is not a vaild selection");
+				REDO = true;
+			}
+
+			if (!REDO) {
+				switch (selection) {
+				case 1:
+					System.out.println("You are dealed a(n) " + cardDisplayName[index + 1] + " & a(n) " + cardDisplayName[index + 2]);
+					System.out.println("Your total is: " + (cardValue[index + 1] + cardValue[index + 2]));
+					index++;
+					break;
+				case 2:
+
+					break;
+				default:
+					
+					break;
+				}
+			}
+
+		} while (REDO);
+
 	}
+
+	private void quit() {
+		System.out.println("\fSaving...");
+		// SAVING CODE HERE
+
+		System.out.println("Saving Complete");
+		System.out.println("Thank you for playing!!!");
+		System.exit(0);
+	}
+
 }
 
+// @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 class InputHandler implements KeyListener, FocusListener {
 
 	public boolean[] key = new boolean[68836];
