@@ -47,12 +47,12 @@ public class BlackjackGame implements Runnable {
 		suits[2] = "Hearts";
 		suits[3] = "Spades";
 		suits[4] = "Diamonds";
-		
+
 		input = new InputHandler();
-		//addKeyListener(input);
-		//addFocusListener(input);
-		//addMouseListener(input);
-		//addMouseMotionListener(input);
+		// addKeyListener(input);
+		// addFocusListener(input);
+		// addMouseListener(input);
+		// addMouseMotionListener(input);
 	}
 
 	public static void main(String[] args) {
@@ -63,10 +63,10 @@ public class BlackjackGame implements Runnable {
 	@Override
 	public void run() {
 		shuffle();
-		setDisplayNames();
-		mainMenu();
+		// mainMenu();
+		play();
 	}
-	
+
 	private void start() {
 		if (running)
 			return;
@@ -90,9 +90,9 @@ public class BlackjackGame implements Runnable {
 
 	public void shuffle() {
 		for (int i = 1; i <= 52; i++) {
-			boolean OPEN = false;
-
+			boolean OPEN;
 			do {
+				OPEN = false;
 				cardValue[i] = (randomValue.nextInt(12) + 1);
 				cardSuit[i] = suits[randomValue.nextInt(4) + 1];
 				if (i > 1) {
@@ -107,12 +107,7 @@ public class BlackjackGame implements Runnable {
 					OPEN = true;
 				}
 			} while (!OPEN);
-		}
-	}
 
-	public void setDisplayNames() {
-
-		for (int i = 1; i <= 52; i++) {
 			switch (cardValue[i]) {
 			case 1:
 				cardDisplayName[i] = "Ace of " + cardSuit[i];
@@ -136,6 +131,10 @@ public class BlackjackGame implements Runnable {
 			}
 			System.out.println(i + "\t" + cardValue[i] + "\t" + cardDisplayName[i] + "\t" + cardSuit[i]);
 		}
+	}
+
+	public void setDisplayNames() {
+
 	}
 
 	public void mainMenu() {
@@ -191,7 +190,7 @@ public class BlackjackGame implements Runnable {
 	public void play() {
 		boolean REDO;
 		int bet = 0;
-		
+
 		System.out.println("\fWelcome to the Blackjack Table. Here, the minimum bet is $" + minBet);
 		System.out.println("Your Info:  $" + money + "  Wins: " + gamesWon + "/" + totalGames + "\n");
 		do {
@@ -203,8 +202,8 @@ public class BlackjackGame implements Runnable {
 				System.out.print("\nThat is not a vaild bet. Here, the minimum bet is $" + minBet);
 				REDO = true;
 			}
-		}while (bet <= 0);
-		
+		} while (bet <= 0);
+
 		System.out.println("\f");
 		System.out.println("\nYou are dealed the " + cardDisplayName[index + 1] + " & the " + cardDisplayName[index + 2]);
 		System.out.println("Your total is: " + (cardValue[index + 1] + cardValue[index + 2]));
@@ -214,8 +213,8 @@ public class BlackjackGame implements Runnable {
 		System.out.println("\nThe dealer is showing the " + cardDisplayName[index + 1] + " & a hidden card (" + cardDisplayName[index + 2] + ")");
 		dealerTotal = cardValue[index + 1] + cardValue[index + 2];
 		index += 2;
-		
-		if (playerTotal == 21){
+
+		if (playerTotal == 21) {
 			System.out.println("\nYou got blackjack!!!");
 		}
 
@@ -227,7 +226,7 @@ public class BlackjackGame implements Runnable {
 				System.out.println("[1]-Hit");
 				System.out.println("[2]-Stay");
 				selection = keyboardInput.nextInt();
-				if (selection != 1 && selection != 2){
+				if (selection != 1 && selection != 2) {
 					System.out.println("That is not a vaild selection");
 					REDO = true;
 				}
@@ -241,23 +240,30 @@ public class BlackjackGame implements Runnable {
 				case 1:
 					REDO = true;
 					System.out.print("You are dealed the " + cardDisplayName[index + 1] + " Along with your ");
-					
-					for (int i = playerCardNum; i > 0; i--){
-						if (playerCardNum == 2){
-							System.out.print(cardDisplayName[index - (i + 5)]); //-2 to account for the dealer's cards
+
+					for (int i = playerCardNum; i > 0; i--) {
+						System.out.println("Test");
+						if (playerCardNum == 2) {
+							System.out.print(cardDisplayName[(index - (i + 5))]); // -2
+																					// to
+																					// account
+																					// for
+																					// the
+																					// dealer's
+																					// cards
+							System.out.print(cardDisplayName[(index - (i + 4))]);
+						} else {
+							System.out.print(cardDisplayName[index - (i + 3)]);
 						}
-						else {
-							System.out.print(cardDisplayName[index - (i + 3)]);	
-						}
-						
-						if (i > 1){
+
+						if (i > 1) {
 							System.out.print(" & your ");
 						}
 					}
 					playerCardNum++;
 					playerTotal += cardValue[index + 1];
 					System.out.println("\nYour total is: " + playerTotal);
-					if (playerTotal > 21){
+					if (playerTotal > 21) {
 						System.out.println("You Busted");
 						money -= bet;
 						REDO = false;
@@ -265,10 +271,10 @@ public class BlackjackGame implements Runnable {
 					index++;
 					break;
 				case 2:
-					
+
 					break;
 				default:
-					
+
 					break;
 				}
 			}
