@@ -92,19 +92,15 @@ public class BlackjackGame implements Runnable {
 		for (int i = 1; i <= 52; i++) {
 			boolean OPEN;
 			do {
-				OPEN = false;
+				OPEN = true;
 				cardValue[i] = (randomValue.nextInt(12) + 1);
 				cardSuit[i] = suits[randomValue.nextInt(4) + 1];
 				if (i > 1) {
 					for (int x = 1; x < i; x++) {
-						if (cardValue[i] == cardValue[x] && cardSuit[i] == cardSuit[x]) {
+						if (cardValue[i] == cardValue[x] && cardSuit[i].equalsIgnoreCase(cardSuit[x])) {
 							OPEN = false;
-						} else {
-							OPEN = true;
 						}
 					}
-				} else {
-					OPEN = true;
 				}
 			} while (!OPEN);
 
