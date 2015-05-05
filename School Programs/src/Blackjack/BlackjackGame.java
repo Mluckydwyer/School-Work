@@ -31,8 +31,8 @@ public class BlackjackGame implements Runnable {
 	private boolean running = false;
 
 	private int[] cardValue;
-	private String[] suits;
 	private String[] cardSuit;
+	private String[] suits;
 	private String[] cardDisplayName;
 
 	public BlackjackGame() {
@@ -62,8 +62,10 @@ public class BlackjackGame implements Runnable {
 
 	@Override
 	public void run() {
+		create();
 		shuffle();
-		// mainMenu();
+		setDisplayNames();
+		//mainMenu();
 		play();
 	}
 
@@ -88,22 +90,41 @@ public class BlackjackGame implements Runnable {
 
 	}
 
-	public void shuffle() {
-		for (int i = 1; i <= 52; i++) {
-			boolean OPEN;
-			do {
-				OPEN = true;
-				cardValue[i] = (randomValue.nextInt(12) + 1);
-				cardSuit[i] = suits[randomValue.nextInt(4) + 1];
-				if (i > 1) {
-					for (int x = 1; x < i; x++) {
-						if (cardValue[i] == cardValue[x] && cardSuit[i].equalsIgnoreCase(cardSuit[x])) {
-							OPEN = false;
-						}
-					}
-				}
-			} while (!OPEN);
+	public void create() {
+		for (int i = 1; i <= 12; i++) {
+			cardValue[i] = i;
+			cardValue[i + 1] = i;
+			cardValue[i + 2] = i;
+			cardValue[i + 3] = i;
 
+			cardSuit[i] = suits[1];
+			cardSuit[i + 1] = suits[2];
+			cardSuit[i + 2] = suits[3];
+			cardSuit[i + 3] = suits[4];
+			//System.out.println(i + "\t" + cardValue[i] + "\t" + cardDisplayName[i] + "\t" + cardSuit[i]);
+			//System.out.println((i + 1)+ "\t" + cardValue[i + 1] + "\t" + cardDisplayName[i + 1] + "\t" + cardSuit[i + 1]);
+			//System.out.println((i + 2)+ "\t" + cardValue[i + 2] + "\t" + cardDisplayName[i + 2] + "\t" + cardSuit[i + 2]);
+			//System.out.println((i + 3)+ "\t" + cardValue[i + 3] + "\t" + cardDisplayName[i + 3] + "\t" + cardSuit[i + 3]);
+		}
+	}
+
+	public void shuffle() {
+		for (int i = 1; i <= cardNum; i++) {
+			int arrayIndex = randomValue.nextInt(cardNum + 1);
+			int num = cardValue[arrayIndex];
+			cardValue[arrayIndex] = cardValue[i];
+			cardValue[i] = num;
+
+			//String suit = cardSuit[arrayIndex];
+			//cardSuit[arrayIndex] = cardSuit[i];
+			//cardSuit[i] = suit;
+
+			System.out.println(i + "\t" + cardValue[i] + "\t" + cardDisplayName[i] + "\t" + cardSuit[i]);
+		}
+	}
+
+	public void setDisplayNames() {
+		for (int i = 1; i <= cardNum; i++) {
 			switch (cardValue[i]) {
 			case 1:
 				cardDisplayName[i] = "Ace of " + cardSuit[i];
@@ -125,12 +146,7 @@ public class BlackjackGame implements Runnable {
 				cardDisplayName[i] = cardValue[i] + " of " + cardSuit[i];
 				break;
 			}
-			System.out.println(i + "\t" + cardValue[i] + "\t" + cardDisplayName[i] + "\t" + cardSuit[i]);
 		}
-	}
-
-	public void setDisplayNames() {
-
 	}
 
 	public void mainMenu() {
