@@ -65,7 +65,7 @@ public class BlackjackGame implements Runnable {
 		create();
 		shuffle();
 		setDisplayNames();
-		//mainMenu();
+		mainMenu();
 		play();
 	}
 
@@ -91,20 +91,18 @@ public class BlackjackGame implements Runnable {
 	}
 
 	public void create() {
-		for (int i = 1; i <= 12; i++) {
-			cardValue[i] = i;
-			cardValue[i + 1] = i;
-			cardValue[i + 2] = i;
-			cardValue[i + 3] = i;
+		int count = 1;
+		for (int i = 1; i <= (13 * (cardNum / 52)); i++) {
+			cardValue[count] = i;
+			cardValue[count + 1] = i;
+			cardValue[count + 2] = i;
+			cardValue[count + 3] = i;
 
-			cardSuit[i] = suits[1];
-			cardSuit[i + 1] = suits[2];
-			cardSuit[i + 2] = suits[3];
-			cardSuit[i + 3] = suits[4];
-			//System.out.println(i + "\t" + cardValue[i] + "\t" + cardDisplayName[i] + "\t" + cardSuit[i]);
-			//System.out.println((i + 1)+ "\t" + cardValue[i + 1] + "\t" + cardDisplayName[i + 1] + "\t" + cardSuit[i + 1]);
-			//System.out.println((i + 2)+ "\t" + cardValue[i + 2] + "\t" + cardDisplayName[i + 2] + "\t" + cardSuit[i + 2]);
-			//System.out.println((i + 3)+ "\t" + cardValue[i + 3] + "\t" + cardDisplayName[i + 3] + "\t" + cardSuit[i + 3]);
+			cardSuit[count] = suits[1];
+			cardSuit[count + 1] = suits[2];
+			cardSuit[count + 2] = suits[3];
+			cardSuit[count + 3] = suits[4];
+			count += 4;
 		}
 	}
 
@@ -115,11 +113,9 @@ public class BlackjackGame implements Runnable {
 			cardValue[arrayIndex] = cardValue[i];
 			cardValue[i] = num;
 
-			//String suit = cardSuit[arrayIndex];
-			//cardSuit[arrayIndex] = cardSuit[i];
-			//cardSuit[i] = suit;
-
-			System.out.println(i + "\t" + cardValue[i] + "\t" + cardDisplayName[i] + "\t" + cardSuit[i]);
+			String suit = cardSuit[arrayIndex];
+			cardSuit[arrayIndex] = cardSuit[i];
+			cardSuit[i] = suit;
 		}
 	}
 
@@ -146,6 +142,7 @@ public class BlackjackGame implements Runnable {
 				cardDisplayName[i] = cardValue[i] + " of " + cardSuit[i];
 				break;
 			}
+			System.out.println(i + "\t\t" + cardValue[i] + "\t\t" + cardSuit[i] + "\t\t" + cardDisplayName[i]);
 		}
 	}
 
@@ -238,12 +235,13 @@ public class BlackjackGame implements Runnable {
 				System.out.println("[1]-Hit");
 				System.out.println("[2]-Stay");
 				selection = keyboardInput.nextInt();
-				if (selection != 1 && selection != 2) {
+				REDO = false;
+				if (selection < 1 || selection > 2) {
 					System.out.println("That is not a vaild selection");
 					REDO = true;
 				}
 			} catch (Exception e) {
-				System.out.println("That is not a vaild selection");
+				System.out.println("That is not a vaild selection, Exception caught");
 				REDO = true;
 			}
 
@@ -256,13 +254,7 @@ public class BlackjackGame implements Runnable {
 					for (int i = playerCardNum; i > 0; i--) {
 						System.out.println("Test");
 						if (playerCardNum == 2) {
-							System.out.print(cardDisplayName[(index - (i + 5))]); // -2
-																					// to
-																					// account
-																					// for
-																					// the
-																					// dealer's
-																					// cards
+							System.out.print(cardDisplayName[(index - (i + 5))]); // -5 for the cards already drawn
 							System.out.print(cardDisplayName[(index - (i + 4))]);
 						} else {
 							System.out.print(cardDisplayName[index - (i + 3)]);
