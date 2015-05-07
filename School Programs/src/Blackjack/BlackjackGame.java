@@ -12,7 +12,6 @@ public class BlackjackGame implements Runnable {
 	private static Scanner keyboardInput;
 	private static Random randomValue;
 	private Thread thread;
-	private InputHandler input;
 
 	private int startMoney = 10000;
 	private int money = startMoney;
@@ -47,12 +46,6 @@ public class BlackjackGame implements Runnable {
 		suits[2] = "Hearts";
 		suits[3] = "Spades";
 		suits[4] = "Diamonds";
-
-		input = new InputHandler();
-		// addKeyListener(input);
-		// addFocusListener(input);
-		// addMouseListener(input);
-		// addMouseMotionListener(input);
 	}
 
 	public static void main(String[] args) {
@@ -62,11 +55,34 @@ public class BlackjackGame implements Runnable {
 
 	@Override
 	public void run() {
+		int selection;
+		boolean REDO = true;
+
 		create();
 		shuffle();
 		setDisplayNames();
-		mainMenu();
-		play();
+		selection = mainMenu();
+
+		while (REDO) {
+			switch (selection) {
+			case 1:
+				REDO = play();
+				break;
+			case 2:
+				settings();
+				break;
+			case 3:
+				playerStats();
+				break;
+			case 4:
+				quit();
+				break;
+			default:
+				System.out.println("An Error Has Occured, please try again\n");
+				REDO = true;
+				break;
+			}
+		}
 	}
 
 	private void start() {
@@ -146,7 +162,7 @@ public class BlackjackGame implements Runnable {
 		}
 	}
 
-	public void mainMenu() {
+	public int mainMenu() {
 		boolean REDO;
 		int selection = 0;
 
@@ -160,30 +176,15 @@ public class BlackjackGame implements Runnable {
 				System.out.println("[4]-Quit");
 
 				selection = keyboardInput.nextInt();
-
-				switch (selection) {
-				case 1:
-					play();
-					break;
-				case 2:
-					settings();
-					break;
-				case 3:
-					playerStats();
-					break;
-				case 4:
-					quit();
-					break;
-				default:
-					System.out.println("An Error Has Occured, please try again\n");
+				if (selection > 4 || selection < 1) {
 					REDO = true;
-					break;
 				}
 			} catch (Exception e) {
-				System.out.println("That is not a vaild selection\n");
+				System.out.println("That is not a vaild selection Here\n");
 				REDO = true;
 			}
 		} while (REDO);
+		return selection;
 	}
 
 	private void playerStats() {
@@ -196,8 +197,10 @@ public class BlackjackGame implements Runnable {
 
 	}
 
-	public void play() {
+	public boolean play() {
 		boolean REDO;
+		boolean REPLAY = false;
+
 		int bet = 0;
 
 		System.out.println("\fWelcome to the Blackjack Table. Here, the minimum bet is $" + minBet);
@@ -235,10 +238,9 @@ public class BlackjackGame implements Runnable {
 				System.out.println("[1]-Hit");
 				System.out.println("[2]-Stay");
 				selection = keyboardInput.nextInt();
-				REDO = false;
-				if (selection < 1 || selection > 2) {
-					System.out.println("That is not a vaild selection");
-					REDO = true;
+				if (selection < 1 && selection > 2) {
+					System.out.println("That is not a vaild selection (1 || 2)");
+					// REDO = true;
 				}
 			} catch (Exception e) {
 				System.out.println("That is not a vaild selection, Exception caught");
@@ -249,19 +251,18 @@ public class BlackjackGame implements Runnable {
 				switch (selection) {
 				case 1:
 					REDO = true;
+					index++;
 					System.out.print("You are dealed the " + cardDisplayName[index + 1] + " Along with your ");
 
 					for (int i = playerCardNum; i > 0; i--) {
-						System.out.println("Test");
 						if (playerCardNum == 2) {
-							System.out.print(cardDisplayName[(index - (i + 5))]); // -5 for the cards already drawn
-							System.out.print(cardDisplayName[(index - (i + 4))]);
+							System.out.print("\t\t" + cardDisplayName[(index - (i + 2))]);// -2 for the cards already drawn
 						} else {
-							System.out.print(cardDisplayName[index - (i + 3)]);
+							System.out.print("\t\t" + cardDisplayName[index - (i + 1)]);
 						}
 
 						if (i > 1) {
-							System.out.print(" & your ");
+							System.out.print("\t\t" + " & your " + "\t\t");
 						}
 					}
 					playerCardNum++;
@@ -272,7 +273,7 @@ public class BlackjackGame implements Runnable {
 						money -= bet;
 						REDO = false;
 					}
-					index++;
+
 					break;
 				case 2:
 
@@ -285,6 +286,31 @@ public class BlackjackGame implements Runnable {
 
 		} while (REDO);
 
+		System.out.println("\nWould you like to play again?");
+		do {
+			REDO = true;
+			String playAgain = "ERROR";
+			try {
+				REDO = false;
+				System.out.println("What would you like to bet?");
+				keyboardInput.reset();
+				playAgain = keyboardInput.nextLine();
+			} catch (Exception e) {
+				System.out.print("\nThat is not a vaild answer");
+				REDO = true;
+			}
+
+			if (playAgain.equalsIgnoreCase("yes") || playAgain.equalsIgnoreCase("y") || playAgain.equalsIgnoreCase("1")) {
+				REPLAY = true;
+			}
+			if (playAgain.equalsIgnoreCase("no") || playAgain.equalsIgnoreCase("n") || playAgain.equalsIgnoreCase("2")) {
+				REPLAY = false;
+			} else {
+				REDO = true;
+			}
+		} while (REDO);
+		
+		return REPLAY;
 	}
 
 	private void quit() {
@@ -296,46 +322,4 @@ public class BlackjackGame implements Runnable {
 		System.exit(0);
 	}
 
-}
-
-// @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-class InputHandler implements KeyListener, FocusListener {
-
-	public boolean[] key = new boolean[68836];
-
-	@Override
-	public void focusGained(FocusEvent e) {
-
-	}
-
-	@Override
-	public void focusLost(FocusEvent e) {
-		for (int i = 0; i < key.length; i++) {
-			key[i] = false;
-		}
-	}
-
-	@Override
-	public void keyPressed(KeyEvent e) {
-		int keyCode = e.getKeyCode();
-		if (keyCode > 0 && keyCode < key.length) {
-			key[keyCode] = false;
-		}
-	}
-
-	@Override
-	public void keyReleased(KeyEvent e) {
-		int keyCode = e.getKeyCode();
-		if (keyCode > 0 && keyCode < key.length) {
-			key[keyCode] = false;
-		}
-	}
-
-	@Override
-	public void keyTyped(KeyEvent e) {
-		int keyCode = e.getKeyCode();
-		if (keyCode > 0 && keyCode < key.length) {
-			key[keyCode] = false;
-		}
-	}
 }
