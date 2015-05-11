@@ -5,10 +5,13 @@ import java.util.Scanner;
 
 public class BlackjackGame implements Runnable {
 
-	private static Scanner keyboardInput;
+	// Set up the objects
+	private static Scanner keyboardInputInt;
+	private static Scanner keyboardInputString;
 	private static Random randomValue;
 	private static Thread thread;
 
+	// set up the variables
 	private int startMoney = 10000;
 	private int money = startMoney;
 	private int minBet = 1;
@@ -25,13 +28,15 @@ public class BlackjackGame implements Runnable {
 
 	private boolean running = false;
 
+	// set up the arrays
 	private int[] cardValue;
 	private String[] cardSuit;
 	private String[] suits;
 	private String[] cardDisplayName;
 
+	// I use the constructor to set the array length and the 4 suits
 	public BlackjackGame() {
-		keyboardInput = new Scanner(System.in);
+		keyboardInputInt = new Scanner(System.in);
 		randomValue = new Random();
 		cardValue = new int[cardNum + 1];
 		suits = new String[5];
@@ -44,11 +49,23 @@ public class BlackjackGame implements Runnable {
 		suits[4] = "Diamonds";
 	}
 
+	// Main method just sets up the main thread
 	public static void main(String[] args) {
 		BlackjackGame game = new BlackjackGame();
 		game.start();
 	}
 
+	//The first thing that is called. This sets up and starts the main thread for my game
+	private void start() {
+		if (running)
+			return;
+		running = true;
+		thread = new Thread(this);
+		thread.start();
+	}
+	
+	// This is my run loop. This is my main run loop where it all stems from to call all of the other methods. This also allows me to run it as an
+	// applet if i so please
 	@Override
 	public void run() {
 		int selection;
@@ -84,14 +101,7 @@ public class BlackjackGame implements Runnable {
 		} while (REDO);
 	}
 
-	private void start() {
-		if (running)
-			return;
-		running = true;
-		thread = new Thread(this);
-		thread.start();
-	}
-
+	//
 	private void stop() {
 		if (!running)
 			return;
@@ -177,7 +187,7 @@ public class BlackjackGame implements Runnable {
 				System.out.println("[3]-Player Stats");
 				System.out.println("[4]-Quit");
 
-				selection = keyboardInput.nextInt();
+				selection = keyboardInputInt.nextInt();
 				if (selection > 4 || selection < 1) {
 					REDO = true;
 				}
@@ -211,7 +221,7 @@ public class BlackjackGame implements Runnable {
 			try {
 				REDO = false;
 				System.out.println("What would you like to bet?");
-				bet = keyboardInput.nextInt();
+				bet = keyboardInputInt.nextInt();
 			} catch (Exception e) {
 				System.out.print("\nThat is not a vaild bet. Here, the minimum bet is $" + minBet);
 				REDO = true;
@@ -240,7 +250,7 @@ public class BlackjackGame implements Runnable {
 				System.out.println("\nWhat would you like to do:");
 				System.out.println("[1]-Hit");
 				System.out.println("[2]-Stay");
-				selection = keyboardInput.nextInt();
+				selection = keyboardInputInt.nextInt();
 				if (selection < 1 && selection > 2) {
 					System.out.println("That is not a vaild selection (1 || 2)");
 					// REDO = true;
@@ -273,8 +283,8 @@ public class BlackjackGame implements Runnable {
 					System.out.println("\nYour total is: " + playerTotal);
 					if (playerTotal > 21) {
 						for (int i = playerCardNum; i > 0; i--) {
-							if (i == playerCardNum){
-								
+							if (i == playerCardNum) {
+
 							}
 						}
 						System.out.println("You Busted");
@@ -284,7 +294,8 @@ public class BlackjackGame implements Runnable {
 
 					break;
 				case 2:
-
+					System.out.println("\nThe dealer shows the " + cardDisplayName[index - (playerCardNum - 1)] + " & the " + cardDisplayName[index - (playerCardNum - 2)]);
+					dealerTotal = cardValue[index + 1] + cardValue[index + 2];
 					break;
 				default:
 
@@ -299,22 +310,20 @@ public class BlackjackGame implements Runnable {
 			String playAgain = "ERROR";
 			try {
 				System.out.println("\nWould you like to play again?");
-				keyboardInput.reset();
-				playAgain = keyboardInput.nextLine();
+				playAgain = keyboardInputString.nextLine();
+				if (playAgain.equalsIgnoreCase("yes") || playAgain.equalsIgnoreCase("y") || playAgain.equalsIgnoreCase("1")) {
+					REPLAY = true;
+				} else if (playAgain.equalsIgnoreCase("no") || playAgain.equalsIgnoreCase("n") || playAgain.equalsIgnoreCase("2")) {
+					REPLAY = false;
+				} else {
+					System.out.print("\nThat is not a vaild answer");
+					REDO = true;
+				}
 			} catch (Exception e) {
-				System.out.print("\nThat is not a vaild answer");
+				System.out.print("\nThat is not a vaild answer (" + playAgain);
 				REDO = true;
 			}
 
-			if (playAgain.equalsIgnoreCase("yes") || playAgain.equalsIgnoreCase("y") || playAgain.equalsIgnoreCase("1")) {
-				REPLAY = true;
-			}
-			if (playAgain.equalsIgnoreCase("no") || playAgain.equalsIgnoreCase("n") || playAgain.equalsIgnoreCase("2")) {
-				REPLAY = false;
-			} else {
-				System.out.print("\nThat is not a vaild answer");
-				REDO = true;
-			}
 		} while (REDO);
 
 		return REPLAY;
