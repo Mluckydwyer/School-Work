@@ -26,7 +26,8 @@ public class BlackjackGame implements Runnable {
 	private int playerCardNum = 0;
 	private int dealerCardNum = 1;
 
-	private boolean running = false;
+	private boolean debugMode = true; // Enables debug mode
+	private boolean running = false; // Tells if threads are running
 
 	// set up the arrays
 	private int[] cardValue;
@@ -37,6 +38,7 @@ public class BlackjackGame implements Runnable {
 	// I use the constructor to set the array length and the 4 suits
 	public BlackjackGame() {
 		keyboardInputInt = new Scanner(System.in);
+		keyboardInputString = new Scanner(System.in);
 		randomValue = new Random();
 		cardValue = new int[cardNum + 1];
 		suits = new String[5];
@@ -55,7 +57,10 @@ public class BlackjackGame implements Runnable {
 		game.start();
 	}
 
-	//The first thing that is called. This sets up and starts the main thread for my game
+	/*
+	 * The first thing that is called. This sets up and starts the main thread
+	 * for my game
+	 */
 	private void start() {
 		if (running)
 			return;
@@ -63,9 +68,12 @@ public class BlackjackGame implements Runnable {
 		thread = new Thread(this);
 		thread.start();
 	}
-	
-	// This is my run loop. This is my main run loop where it all stems from to call all of the other methods. This also allows me to run it as an
-	// applet if i so please
+
+	/*
+	 * This is my run loop. This is my main run loop where it all stems from to
+	 * call all of the other methods. This also allows me to run it as an applet
+	 * if i so please
+	 */
 	@Override
 	public void run() {
 		int selection;
@@ -91,7 +99,7 @@ public class BlackjackGame implements Runnable {
 				REDO = true;
 				break;
 			case 4:
-				quit();
+				stop();
 				break;
 			default:
 				System.out.println("An Error Has Occured, please try again\n");
@@ -101,11 +109,22 @@ public class BlackjackGame implements Runnable {
 		} while (REDO);
 	}
 
-	//
+	/*
+	 * This is called when the game exits to save the player's progress and quit
+	 * the game. The code about the thread is for joining or ending the thread
+	 * that was started when the program started.
+	 */
 	private void stop() {
+		System.out.println("\fSaving...");
+		// SAVING CODE HERE
+
+		System.out.println("Saving Complete");
+		System.out.println("Thank you for playing!!!");
+
 		if (!running)
 			return;
 		running = false;
+
 		try {
 			thread.join();
 		} catch (InterruptedException e) {
@@ -115,7 +134,14 @@ public class BlackjackGame implements Runnable {
 
 	}
 
-	public void create() {
+	/*
+	 * This creates the cards with a basic card values and suits This does this
+	 * by creating the first 4 Aces and the next 4 2s an so on
+	 * 
+	 * card count in 4s (4, 8 ,12) because that is how many there are of each
+	 * card
+	 */
+	private void create() {
 		int count = 1;
 		for (int i = 1; i <= (13 * (cardNum / 52)); i++) {
 			cardValue[count] = i;
@@ -128,26 +154,51 @@ public class BlackjackGame implements Runnable {
 			cardSuit[count + 2] = suits[3];
 			cardSuit[count + 3] = suits[4];
 			count += 4;
+
+			if (debugMode)
+				for (int x = i; x <= (i + 4); x++) {
+					System.out.println(i + "\t\t" + cardValue[i] + "\t\t" + cardSuit[i]);
+				}
 		}
 	}
 
-	public void shuffle() {
-		for (int x = 1; x <= (shuffleCount); x++) {
-			for (int i = 1; i <= (cardNum); i++) {
+	/*
+	 * This takes the already made cards and shuffles them and randomizes there
+	 * order
+	 * 
+	 * shuffle count is how many times the deck is shuffled, this is because one
+	 * pass of the shuffler is not enough to make them truly random so it does
+	 * it as many times as shuffle count is set to, by default it is set to 10
+	 * 
+	 * It does this by selecting a card, then second card using the loop count
+	 * value, and then sets the first the the second and the second to the first
+	 * and the same for the suit
+	 */
+	private void shuffle() {
+		for (int x = 1; x <= shuffleCount; x++) {
+			for (int i = 1; i <= cardNum; i++) {
 				int arrayIndex = randomValue.nextInt(cardNum) + 1;
 				int num = cardValue[arrayIndex];
 				cardValue[arrayIndex] = cardValue[i];
 				cardValue[i] = num;
-				System.out.println("Switched: " + arrayIndex + " With: " + i);
 
 				String suit = cardSuit[arrayIndex];
 				cardSuit[arrayIndex] = cardSuit[i];
 				cardSuit[i] = suit;
+
+				if (debugMode)
+					System.out.println("Shuffle count:" + x + " \tSwitch:" + i + " \tSwitched card " + arrayIndex + " \tWith card " + i);
 			}
 		}
 	}
 
-	public void setDisplayNames() {
+	/*
+	 * This sets the display names that the player will see in game to each card
+	 * 
+	 * It does this by checking and or setting the Ace, Jack, Queen, and King
+	 * first before setting the rest to the default # of suit format
+	 */
+	private void setDisplayNames() {
 		for (int i = 1; i <= cardNum; i++) {
 			switch (cardValue[i]) {
 			case 1:
@@ -170,18 +221,23 @@ public class BlackjackGame implements Runnable {
 				cardDisplayName[i] = cardValue[i] + " of " + cardSuit[i];
 				break;
 			}
-			System.out.println(i + "\t\t" + cardValue[i] + "\t\t" + cardSuit[i] + "\t\t" + cardDisplayName[i]);
+
+			if (debugMode)
+				System.out.println(i + "\t\t" + cardValue[i] + "\t\t" + cardSuit[i] + "\t\t\t" + cardDisplayName[i]);
 		}
 	}
 
-	public int mainMenu() {
+	/*
+	 * 
+	 */
+	private int mainMenu() {
 		boolean REDO;
 		int selection = 0;
 
 		do {
 			REDO = false;
 			try {
-				System.out.println("Welcome to Blackjack, please select an option from the menu below");
+				System.out.println("\fWelcome to Blackjack, please select an option from the menu below");
 				System.out.println("[1]-Play Blackjack");
 				System.out.println("[2]-Settings");
 				System.out.println("[3]-Player Stats");
@@ -192,6 +248,7 @@ public class BlackjackGame implements Runnable {
 					REDO = true;
 				}
 			} catch (Exception e) {
+				e.printStackTrace();
 				System.out.println("That is not a vaild selection Here\n");
 				REDO = true;
 			}
@@ -199,17 +256,27 @@ public class BlackjackGame implements Runnable {
 		return selection;
 	}
 
+	/*
+	 * This will handle the player achievements menu and display a screen where
+	 * the player can see there wins to loses and money
+	 */
 	private void playerStats() {
 		// TODO Auto-generated method stub
 
 	}
 
+	/*
+	 * This will handle the setting menu and all the things the user can change
+	 */
 	private void settings() {
 		// TODO Auto-generated method stub
 
 	}
 
-	public boolean play() {
+	/*
+	 * 
+	 */
+	private boolean play() {
 		boolean REDO;
 		boolean REPLAY = false;
 
@@ -217,12 +284,15 @@ public class BlackjackGame implements Runnable {
 
 		System.out.println("\fWelcome to the Blackjack Table. Here, the minimum bet is $" + minBet);
 		System.out.println("Your Info:  $" + money + "  Wins: " + gamesWon + "/" + totalGames + "\n");
+
 		do {
+
 			try {
 				REDO = false;
 				System.out.println("What would you like to bet?");
 				bet = keyboardInputInt.nextInt();
 			} catch (Exception e) {
+				e.printStackTrace();
 				System.out.print("\nThat is not a vaild bet. Here, the minimum bet is $" + minBet);
 				REDO = true;
 			}
@@ -234,83 +304,57 @@ public class BlackjackGame implements Runnable {
 		index += 2;
 		playerCardNum += 2;
 
-		System.out.println("\nThe dealer is showing the " + cardDisplayName[index + 1] + " & a hidden card (" + cardDisplayName[index + 2] + ")");
+		System.out.println("\nThe dealer is showing the " + cardDisplayName[index + 1] + " & a hidden card");
 		dealerTotal = cardValue[index + 1] + cardValue[index + 2];
+
+		if (debugMode) {
+			System.out.print(" (" + cardDisplayName[index + 2] + ")");
+			System.out.println("The dealers total is: " + dealerTotal);
+		}
+
 		index += 2;
 		dealerCardNum += 2;
 
-		if (playerTotal == 21) {
-			System.out.println("\nYou got blackjack!!!");
-		}
-
 		do {
 			int selection = 0;
+
 			try {
 				REDO = false;
 				System.out.println("\nWhat would you like to do:");
 				System.out.println("[1]-Hit");
 				System.out.println("[2]-Stay");
 				selection = keyboardInputInt.nextInt();
-				if (selection < 1 && selection > 2) {
-					System.out.println("That is not a vaild selection (1 || 2)");
-					// REDO = true;
-				}
 			} catch (Exception e) {
-				System.out.println("That is not a vaild selection, Exception caught");
+				e.printStackTrace();
+				System.out.println("That is not a vaild selection");
 				REDO = true;
 			}
 
 			if (!REDO) {
 				switch (selection) {
 				case 1:
-					REDO = true;
-					index++;
-					System.out.print("\nYou are dealed the " + cardDisplayName[index - 1] + " Along with your ");
-
-					for (int i = playerCardNum; i > 0; i--) {
-						if (playerCardNum == 2) {
-							System.out.print(cardDisplayName[(index - (i + 2))]);// -2 for the cards already drawn
-						} else {
-							System.out.print(cardDisplayName[index - (i + 1)]);
-						}
-
-						if (i > 1) {
-							System.out.print(" & your ");
-						}
-					}
-					playerCardNum++;
-					playerTotal += cardValue[index + 1];
-					System.out.println("\nYour total is: " + playerTotal);
-					if (playerTotal > 21) {
-						for (int i = playerCardNum; i > 0; i--) {
-							if (i == playerCardNum) {
-
-							}
-						}
-						System.out.println("You Busted");
-						money -= bet;
-						REDO = false;
-					}
-
+					hit();
 					break;
 				case 2:
-					System.out.println("\nThe dealer shows the " + cardDisplayName[index - (playerCardNum - 1)] + " & the " + cardDisplayName[index - (playerCardNum - 2)]);
-					dealerTotal = cardValue[index + 1] + cardValue[index + 2];
+					dealer();
 					break;
 				default:
-
+					System.out.println("That is not a vaild selection");
+					REDO = true;
 					break;
 				}
 			}
-
 		} while (REDO);
 
 		do {
 			REDO = false;
 			String playAgain = "ERROR";
+
 			try {
 				System.out.println("\nWould you like to play again?");
-				playAgain = keyboardInputString.nextLine();
+				playAgain = keyboardInputString.next();
+				System.out.println("Test");
+
 				if (playAgain.equalsIgnoreCase("yes") || playAgain.equalsIgnoreCase("y") || playAgain.equalsIgnoreCase("1")) {
 					REPLAY = true;
 				} else if (playAgain.equalsIgnoreCase("no") || playAgain.equalsIgnoreCase("n") || playAgain.equalsIgnoreCase("2")) {
@@ -320,22 +364,67 @@ public class BlackjackGame implements Runnable {
 					REDO = true;
 				}
 			} catch (Exception e) {
-				System.out.print("\nThat is not a vaild answer (" + playAgain);
+				e.printStackTrace();
+				System.out.print("\nThat is not a vaild answer");
 				REDO = true;
 			}
-
 		} while (REDO);
 
 		return REPLAY;
 	}
 
-	private void quit() {
-		System.out.println("\fSaving...");
-		// SAVING CODE HERE
+	/*
+	 * This handles if the player takes a hit when playing
+	 * 
+	 * The -2 & -1 when displaying the cards of there to compensate for the
+	 * cards that have already been drawn
+	 */
+	private void hit() {
+		index++;
+		System.out.print("\fYou are dealed the " + cardDisplayName[index] + " Along with your ");
 
-		System.out.println("Saving Complete");
-		System.out.println("Thank you for playing!!!");
-		System.exit(0);
+		for (int i = playerCardNum; i > 0; i--) {
+			if (playerCardNum == 2) {
+				System.out.print(cardDisplayName[(index - (i + 2))]);
+			} else {
+				System.out.print(cardDisplayName[index - (i + 1)]);
+			}
+
+			if (i > 1) {
+				System.out.print(" & your ");
+			}
+		}
+		playerCardNum++;
+		playerTotal += cardValue[index];
+		System.out.println("\nYour total is: " + playerTotal);
+
+		if (playerTotal > 21) {
+
+			for (int i = playerCardNum; i > 0; i--) {
+
+				if (i == playerCardNum) {
+
+				}
+			}
+			System.out.println("You Busted");
+			money -= bet;
+		}
 	}
 
+	/*
+	 * This checks if the player has won or got blackjack. This also checks if
+	 * the player has lost.
+	 */
+	private void checkWin() {
+
+	}
+
+	/*
+	 * This handles the dealer when they are hitting and is called when the
+	 * player stays
+	 */
+	private void dealer() {
+		System.out.println("\nThe dealer shows the " + cardDisplayName[index - (playerCardNum - 1)] + " & the " + cardDisplayName[index - (playerCardNum - 2)]);
+		dealerTotal = cardValue[index + 1] + cardValue[index + 2];
+	}
 }
