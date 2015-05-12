@@ -21,6 +21,7 @@ public class BlackjackGame implements Runnable {
 	private int totalGames = 0;
 	private int cardNum = 52;
 	private int shuffleCount = 10;
+	private int payOutPercent = 2;
 	private int playerTotal = 0;
 	private int dealerTotal = 0;
 	private int playerCardNum = 0;
@@ -412,19 +413,51 @@ public class BlackjackGame implements Runnable {
 	}
 
 	/*
-	 * This checks if the player has won or got blackjack. This also checks if
-	 * the player has lost.
-	 */
-	private void checkWin() {
-
-	}
-
-	/*
 	 * This handles the dealer when they are hitting and is called when the
 	 * player stays
 	 */
 	private void dealer() {
 		System.out.println("\nThe dealer shows the " + cardDisplayName[index - (playerCardNum - 1)] + " & the " + cardDisplayName[index - (playerCardNum - 2)]);
 		dealerTotal = cardValue[index + 1] + cardValue[index + 2];
+		
+		if (dealerTotal <= 16){
+			index++;
+			System.out.print("\fThe dealer is dealed the " + cardDisplayName[index] + " Along with his ");
+
+			for (int i = dealerCardNum; i > 0; i--) {
+				if (dealerCardNum == 2) {
+					System.out.print(cardDisplayName[(index - ((dealerCardNum - 2) + 2))]);
+				} else {
+					System.out.print(cardDisplayName[index - (i + 1)]);
+				}
+
+				if (i > 1) {
+					System.out.print(" & his ");
+				}
+			}
+			dealerCardNum++;
+			dealerTotal += cardValue[index];
+			System.out.println("\nYour his is: " + dealerTotal);
+
+			if (dealerTotal > 21) {
+
+				for (int i = dealerCardNum; i > 0; i--) {
+
+					if (i == dealerCardNum) {
+
+					}
+				}
+				System.out.println("The dealer Busted");
+				money += bet * payOutPercent;
+			}
+		}
+	}
+	
+	/*
+	 * This checks if the player has won or got blackjack. This also checks if
+	 * the player has lost.
+	 */
+	private void checkWin() {
+
 	}
 }
