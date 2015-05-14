@@ -1,9 +1,7 @@
 package Blackjack;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileWriter;
-import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.Random;
 import java.util.Scanner;
@@ -13,13 +11,18 @@ public class BlackjackGame implements Runnable {
 	// Set up the objects
 	private static Scanner keyboardInputInt;
 	private static Scanner keyboardInputString;
+	private static Scanner sf;
 	private static Random randomValue;
 	private static FileWriter fw;
+	private static PrintWriter output;
 	private static Thread thread;
 
-	// set up the variables
+	/*
+	 * Set up the variables (These are the default values before being read from
+	 * the file)
+	 */
 	private int startMoney = 10000;
-	private int money;
+	private int money = 0;
 	private int minBet = 100;
 	private int bet = 0;
 	private int index = 0;
@@ -78,8 +81,8 @@ public class BlackjackGame implements Runnable {
 
 	/*
 	 * This is my run loop. This is my main run loop where it all stems from to
-	 * call all of the other methods. This also allows me to run it as an applet
-	 * if i so please
+	 * call all of the other methods. This also allows me to run it as an
+	 * application if i so please
 	 */
 	@Override
 	public void run() {
@@ -123,8 +126,23 @@ public class BlackjackGame implements Runnable {
 	 */
 	private void stop() {
 		System.out.println("\fSaving...");
-		// SAVING CODE HERE
 
+		try {
+			// Save file code
+			fw = new FileWriter("Blackjack.out");
+			output = new PrintWriter(fw);
+			output.println(money);
+			output.println(minBet);
+			output.println(gamesWon);
+			output.println(totalGames);
+			fw.close();
+			output.close();
+		} catch (Exception e1) {
+
+			if (debugMode)
+				e1.printStackTrace();
+			System.out.println("Failed to the file");
+		}
 		System.out.println("Saving Complete");
 		System.out.println("Thank you for playing!!!");
 
@@ -166,6 +184,7 @@ public class BlackjackGame implements Runnable {
 			count += 4;
 
 			if (debugMode)
+
 				for (int x = i; x <= (i + 4); x++) {
 					System.out.println(i + "\t\t" + cardValue[i] + "\t\t" + cardSuit[i]);
 				}
@@ -244,45 +263,64 @@ public class BlackjackGame implements Runnable {
 		boolean REDO;
 		int selection = 0;
 
-		// Loading Code
+		// Loading/Creating the file Code
 		if (debugMode)
 			System.out.println("Now reading from file...");
 
+		/*
+		 * Test to see if there is already a file that has been created.This
+		 * throws an exception if there isn't one, otherwise it loads it
+		 */
 		try {
-			Scanner sf = new Scanner(new File("Blackjack.out"));
+			// Load file code
+			sf = new Scanner(new File("Blackjack.out"));
+			money = sf.nextInt();
+			minBet = sf.nextInt();
+			gamesWon = sf.nextInt();
+			totalGames = sf.nextInt();
 			sf.close();
-
 		} catch (Exception e) {
 
 			if (debugMode)
 				System.out.println("A prexsiting setting file doesn't exist, Creating a new one...");
-			
+			/*
+			 * Sets the player's money to the start money because they aren't
+			 * loading a game
+			 */
+			money = startMoney;
+
 			try {
+				// Create new file code
 				fw = new FileWriter("Blackjack.out");
+				output = new PrintWriter(fw);
+				output.println(money);
+				output.println(minBet);
+				output.println(gamesWon);
+				output.println(totalGames);
+				fw.close();
+				output.close();
 			} catch (Exception e1) {
+
 				if (debugMode)
 					e1.printStackTrace();
+				System.out.println("Failed to create a new file");
 			}
-			PrintWriter output = new PrintWriter(fw);
-			output.println();
-			output.println();
-			output.println();
-			output.println();
 		}
 
+		// Display the main menu
 		do {
 			REDO = false;
+
 			try {
 				System.out.println("\fWelcome to Blackjack, please select an option from the menu below");
 				System.out.println("[1]-Play Blackjack");
 				System.out.println("[2]-Settings");
 				System.out.println("[3]-Player Stats");
 				System.out.println("[4]-Quit");
-
 				selection = keyboardInputInt.nextInt();
-				if (selection > 4 || selection < 1) {
+
+				if (selection > 4 || selection < 1)
 					REDO = true;
-				}
 			} catch (Exception e) {
 				if (debugMode)
 					e.printStackTrace();
@@ -317,7 +355,6 @@ public class BlackjackGame implements Runnable {
 	private boolean play() {
 		boolean REDO;
 		boolean REPLAY = false;
-
 		int bet = 0;
 
 		System.out.println("\fWelcome to the Blackjack Table. Here, the minimum bet is $" + minBet);
@@ -365,6 +402,7 @@ public class BlackjackGame implements Runnable {
 				System.out.println("[2]-Stay");
 				selection = keyboardInputInt.nextInt();
 			} catch (Exception e) {
+
 				if (debugMode)
 					e.printStackTrace();
 				System.out.println("That is not a vaild selection");
