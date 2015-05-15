@@ -490,11 +490,13 @@ public class BlackjackGame implements Runnable {
 		System.out.println("\nThe dealer shows the " + cardDisplayName[index - (playerCardNum - 1)] + " & the " + cardDisplayName[index - (playerCardNum - 2)]);
 		dealerTotal = cardValue[index + 1] + cardValue[index + 2];
 
-		if (dealerTotal <= 16) {
+		while (dealerTotal <= 16) {
 			index++;
-			System.out.print("\fThe dealer is dealed the " + cardDisplayName[index] + " Along with his ");
+			System.out.print("\fThe dealer takes a hit and is dealed the " + cardDisplayName[index] + " Along with his ");
 
+			// prints out past cards
 			for (int i = dealerCardNum; i > 0; i--) {
+
 				if (dealerCardNum == 2) {
 					System.out.print(cardDisplayName[(index - ((dealerCardNum - 2) + 2))]);
 				} else {
@@ -507,37 +509,104 @@ public class BlackjackGame implements Runnable {
 			}
 			dealerCardNum++;
 			dealerTotal += cardValue[index];
-			System.out.println("\nYour his is: " + dealerTotal);
+			System.out.println("\nHis total is: " + dealerTotal);
+		}
 
-			if (dealerTotal > 21) {
-
-				for (int i = dealerCardNum; i > 0; i--) {
-
-					if (i == dealerCardNum) {
-
-					}
-				}
-				System.out.println("The dealer Busted");
-				money += bet * payOutPercent;
-			}
+		if (dealerTotal > 21) {
+			checkWin("bust");
 		}
 	}
 
 	/*
-	 * This checks if the player has won or got blackjack. This also checks if
-	 * the player has lost.
+	 * This method deals with checking any type of winning or losing. It does
+	 * this by taking the check type string and checking different parts
+	 * depending what the value is.
+	 * 
+	 * Here are the values:
+	 * 
+	 * [Bust] - checks if the dealer or player has busted
+	 * 
+	 * [Winner] - Compares the dealer's total to the player's total and
+	 * determines a winner or a push
 	 */
-	private void checkWin() {
-		if (playerTotal > 21) {
+	private void checkWin(String type) {
 
-			for (int i = playerCardNum; i > 0; i--) {
+		switch (type) {
+		case "bust":
+			boolean playerBust = false;
+			boolean dealerBust = false;
+			boolean recheck = false;
 
-				if (cardValue[i] == playerCardNum) {
+			// Player bust
+			// Deals with Aces
+			do {
+				recheck = false;
+				playerBust = false;
 
+				if (playerTotal > 21) {
+
+					for (int i = playerCardNum, count = 0; i > 0; i--) {
+
+						if (count >= 1) {
+							recheck = true;
+							break;
+						}
+
+						if (cardValue[i] == 11) {
+							cardValue[i] = 1;
+							count++;
+						}
+					}
 				}
+			} while (recheck);
+
+			if (playerTotal > 21) {
+				playerBust = true;
 			}
-			System.out.println("You Busted");
-			money -= bet;
+
+			// Dealer Bust
+			do {
+				recheck = false;
+				dealerBust = false;
+
+				if (dealerTotal > 21) {
+
+					for (int i = dealerCardNum, count = 0; i > 0; i--) {
+
+						if (count >= 1) {
+							recheck = true;
+							break;
+						}
+
+						if (i <= 2){
+							if (cardValue[(index - playerCardNum) - i] == 11){
+								cardValue[(index - playerCardNum) - i] = 1;
+								count++;
+							}
+						} else if (i >= 3){
+							if (cardValue[(index - dealerCardNum) - i] == 11){
+								cardValue[(index - playerCardNum) - i] = 1;
+								count++;
+							}
+						}
+						
+						if (cardValue[i] == 11) {
+							cardValue[i] = 1;
+							count++;
+						}
+					}
+				}
+			} while (recheck);
+
+			if (dealerTotal > 21) {
+				dealerBust = true;
+			}
+
+			break;
+		case "winner":
+
+			break;
 		}
 	}
+
 }
