@@ -92,6 +92,7 @@ public class BlackjackGame implements Runnable {
 		create();
 		shuffle();
 		setDisplayNames();
+		resetVariables();
 		selection = mainMenu();
 
 		do {
@@ -160,6 +161,18 @@ public class BlackjackGame implements Runnable {
 			System.exit(0);
 		}
 
+	}
+
+	/*
+	 * This resets the variables before another game is played
+	 */
+	private void resetVariables() {
+		bet = 0;
+		index = 0;
+		playerTotal = 0;
+		dealerTotal = 0;
+		playerCardNum = 0;
+		dealerCardNum = 0;
 	}
 
 	/*
@@ -414,10 +427,11 @@ public class BlackjackGame implements Runnable {
 				switch (selection) {
 				case 1:
 					hit();
-					checkWin();
+					REDO = checkWin("bust");
 					break;
 				case 2:
 					dealer();
+					REDO = checkWin("bust");
 					break;
 				default:
 					System.out.println("That is not a vaild selection");
@@ -470,7 +484,7 @@ public class BlackjackGame implements Runnable {
 			if (playerCardNum == 2) {
 				System.out.print(cardDisplayName[(index - i)]);
 			} else {
-				System.out.print(cardDisplayName[index - (i + 1)]);
+				System.out.print(cardDisplayName[index - (i - 1)]);
 			}
 
 			if (i > 1) {
@@ -529,7 +543,9 @@ public class BlackjackGame implements Runnable {
 	 * [Winner] - Compares the dealer's total to the player's total and
 	 * determines a winner or a push
 	 */
-	private void checkWin(String type) {
+	private boolean checkWin(String type) {
+
+		boolean hitOption = true;
 
 		switch (type) {
 		case "bust":
@@ -562,6 +578,10 @@ public class BlackjackGame implements Runnable {
 
 			if (playerTotal > 21) {
 				playerBust = true;
+				hitOption = false;
+				System.out.println("You busted, the dealer wins");
+				money -= bet;
+				System.out.println(money);
 			}
 
 			// Dealer Bust
@@ -578,18 +598,18 @@ public class BlackjackGame implements Runnable {
 							break;
 						}
 
-						if (i <= 2){
-							if (cardValue[(index - playerCardNum) - i] == 11){
+						if (i <= 2) {
+							if (cardValue[(index - playerCardNum) - i] == 11) {
 								cardValue[(index - playerCardNum) - i] = 1;
 								count++;
 							}
-						} else if (i >= 3){
-							if (cardValue[(index - dealerCardNum) - i] == 11){
+						} else if (i >= 3) {
+							if (cardValue[(index - dealerCardNum) - i] == 11) {
 								cardValue[(index - playerCardNum) - i] = 1;
 								count++;
 							}
 						}
-						
+
 						if (cardValue[i] == 11) {
 							cardValue[i] = 1;
 							count++;
@@ -600,13 +620,17 @@ public class BlackjackGame implements Runnable {
 
 			if (dealerTotal > 21) {
 				dealerBust = true;
+				hitOption = false;
+				System.out.println("The dealer busted, you win");
+				money += bet * payOutPercent;
 			}
-
 			break;
 		case "winner":
 
 			break;
 		}
+
+		return hitOption;
 	}
 
 }
