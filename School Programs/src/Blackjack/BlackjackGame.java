@@ -89,14 +89,15 @@ public class BlackjackGame implements Runnable {
 		int selection;
 		boolean REDO;
 
-		create();
-		shuffle();
-		setDisplayNames();
-		resetVariables();
 		selection = mainMenu();
 
 		do {
 			REDO = true;
+			create();
+			shuffle();
+			setDisplayNames();
+			resetVariables();
+			
 			switch (selection) {
 			case 1:
 				REDO = play();
@@ -448,7 +449,6 @@ public class BlackjackGame implements Runnable {
 			try {
 				System.out.println("\nWould you like to play again?");
 				playAgain = keyboardInputString.next();
-				System.out.println("Test");
 
 				if (playAgain.equalsIgnoreCase("yes") || playAgain.equalsIgnoreCase("y") || playAgain.equalsIgnoreCase("1")) {
 					REPLAY = true;
@@ -481,11 +481,7 @@ public class BlackjackGame implements Runnable {
 		System.out.print("\fYou are dealed the " + cardDisplayName[index] + " Along with your ");
 
 		for (int i = playerCardNum; i > 0; i--) {
-			if (playerCardNum == 2) {
-				System.out.print(cardDisplayName[(index - i)]);
-			} else {
-				System.out.print(cardDisplayName[index - (i - 1)]);
-			}
+				System.out.print(cardDisplayName[index - i]);
 
 			if (i > 1) {
 				System.out.print(" & your ");
@@ -501,26 +497,28 @@ public class BlackjackGame implements Runnable {
 	 * player stays
 	 */
 	private void dealer() {
-		System.out.println("\nThe dealer shows the " + cardDisplayName[index - (playerCardNum - 1)] + " & the " + cardDisplayName[index - (playerCardNum - 2)]);
-		dealerTotal = cardValue[index + 1] + cardValue[index + 2];
-
+		System.out.println("\nThe dealer shows the " + cardDisplayName[1] + " & the " + cardDisplayName[2]);
+		System.out.println("His total is: " + dealerTotal);
+		
 		while (dealerTotal <= 16) {
-			index++;
-			System.out.print("\fThe dealer takes a hit and is dealed the " + cardDisplayName[index] + " Along with his ");
+			
+			System.out.print("\fThe dealer takes a hit and is dealed the " + cardDisplayName[index + 1] + " Along with his ");
 
 			// prints out past cards
-			for (int i = dealerCardNum; i > 0; i--) {
-
-				if (dealerCardNum == 2) {
-					System.out.print(cardDisplayName[(index - ((dealerCardNum - 2) + 2))]);
+			for (int i = dealerCardNum, printCount = 0; i > 0; i--, printCount++) {
+				
+				if (printCount <= 2){	
+				System.out.print(cardDisplayName[printCount]);
 				} else {
-					System.out.print(cardDisplayName[index - (i + 1)]);
+					System.out.print(cardDisplayName[index - (i - 2)]);
 				}
-
+				
 				if (i > 1) {
 					System.out.print(" & his ");
 				}
 			}
+			
+			index++;
 			dealerCardNum++;
 			dealerTotal += cardValue[index];
 			System.out.println("\nHis total is: " + dealerTotal);
