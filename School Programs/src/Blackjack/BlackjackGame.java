@@ -118,6 +118,10 @@ public class BlackjackGame implements Runnable {
 				REDO = true;
 				break;
 			}
+			
+			if (!REDO)
+				selection = mainMenu();
+				REDO = true;
 		} while (REDO);
 	}
 
@@ -372,7 +376,7 @@ public class BlackjackGame implements Runnable {
 		int bet = 0;
 
 		System.out.println("\fWelcome to the Blackjack Table. Here, the minimum bet is $" + minBet);
-		System.out.println("Your Info:  $" + money + "  Wins: " + gamesWon + "/" + totalGames + "\n");
+		System.out.println("Your Info:  $" + money + "  Wins: " + gamesWon + "/" + totalGames);
 
 		do {
 
@@ -380,14 +384,19 @@ public class BlackjackGame implements Runnable {
 				REDO = false;
 				System.out.println("What would you like to bet?");
 				bet = keyboardInputInt.nextInt();
+				
+				if (bet < minBet || bet > money){
+					System.out.println("\nThat is not a vaild bet. Here, the minimum bet is $" + minBet);
+					REDO = true;
+				}
 			} catch (Exception e) {
 				if (debugMode)
 					e.printStackTrace();
-				System.out.print("\nThat is not a vaild bet. Here, the minimum bet is $" + minBet);
+				System.out.println("\nThat is not a vaild bet. Here, the minimum bet is $" + minBet);
 				keyboardInputInt.nextLine();
 				REDO = true;
 			}
-		} while (bet <= 0);
+		} while (REDO);
 		// the dealers cards are card 1 & 2 and players are drawn after
 		System.out.println("\fYou are dealed the " + cardDisplayName[index + 3] + " & the " + cardDisplayName[index + 4]);
 		System.out.println("Your total is: " + (cardValue[index + 3] + cardValue[index + 4]));
