@@ -450,6 +450,7 @@ public class BlackjackGame implements Runnable {
 				case 2:
 					dealer();
 					REDO = checkWin("bust");
+					checkWin("winner");
 					break;
 				default:
 					System.out.println("That is not a vaild selection");
@@ -512,20 +513,20 @@ public class BlackjackGame implements Runnable {
 	 * player stays
 	 */
 	private void dealer() {
-		System.out.println("\nThe dealer shows the " + cardDisplayName[1] + " & the " + cardDisplayName[2]);
+		System.out.println("\fThe dealer shows the " + cardDisplayName[1] + " & the " + cardDisplayName[2]);
 		System.out.println("His total is: " + dealerTotal);
 
 		while (dealerTotal <= 16) {
 
-			System.out.print("\fThe dealer takes a hit and is dealed the " + cardDisplayName[index + 1] + " Along with his ");
+			System.out.print("\nThe dealer takes a hit and is dealed the " + cardDisplayName[index + 1] + " Along with his ");
 
 			// prints out past cards
-			for (int i = dealerCardNum, printCount = 0; i > 0; i--, printCount++) {
+			for (int i = dealerCardNum, printCount = 1; i > 0; i--, printCount++) {
 
 				if (printCount <= 2) {
-					System.out.print(cardDisplayName[printCount]);
+					System.out.print(cardDisplayName[printCount] + printCount);
 				} else {
-					System.out.print(cardDisplayName[index - (i - 2)]);
+					System.out.print(cardDisplayName[index - (i - 2)] + printCount);
 				}
 
 				if (i > 1) {
@@ -539,8 +540,9 @@ public class BlackjackGame implements Runnable {
 			System.out.println("\nHis total is: " + dealerTotal);
 		}
 
-		if (dealerTotal > 21) {
-			checkWin("bust");
+		if (checkWin("bust")) {
+			// Say the dealer stays and does
+			// stuff##############################################################################
 		}
 	}
 
