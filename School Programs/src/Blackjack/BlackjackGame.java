@@ -94,7 +94,7 @@ public class BlackjackGame implements Runnable {
 		do {
 			REDO = true;
 			create();
-			shuffle();
+			//shuffle();
 			setDisplayNames();
 			resetVariables();
 
@@ -167,7 +167,6 @@ public class BlackjackGame implements Runnable {
 	 * Saves the statistics after each change to prevent losing data
 	 */
 	private void save() {
-		System.out.println("\fSaving...");
 
 		try {
 			// Save file code
@@ -181,11 +180,14 @@ public class BlackjackGame implements Runnable {
 			output.close();
 		} catch (Exception e1) {
 
-			if (debugMode)
+			if (debugMode) {
 				e1.printStackTrace();
-			System.out.println("Failed to the file");
+				System.out.println("Failed to the file");
+			}
 		}
-		System.out.println("Saving Complete");
+
+		if (debugMode)
+			System.out.println("Saving Complete");
 	}
 
 	/*
@@ -382,6 +384,7 @@ public class BlackjackGame implements Runnable {
 		boolean REDO;
 		boolean REPLAY = false;
 		bet = 0;
+		totalGames++;
 
 		System.out.println("\fWelcome to the Blackjack Table. Here, the minimum bet is $" + minBet);
 		System.out.println("Your Info:  $" + money + "  Wins: " + gamesWon + "/" + totalGames);
@@ -446,10 +449,14 @@ public class BlackjackGame implements Runnable {
 				case 1:
 					hit();
 					REDO = checkWin("bust");
+
+					if (!checkWin("blackjack"))
+						checkWin("winner");
 					break;
 				case 2:
 					dealer();
-					REDO = checkWin("bust");
+					checkWin("bust");
+					checkWin("blackjack");
 					checkWin("winner");
 					break;
 				default:
@@ -595,9 +602,8 @@ public class BlackjackGame implements Runnable {
 				playerBust = true;
 				hitOption = false;
 				System.out.println("You busted, the dealer wins");
-				System.out.println(bet);
 				money -= bet;
-				System.out.println(money);
+				System.out.println("You won $" + (bet * payOutPercent));
 			}
 
 			// Dealer Bust
@@ -642,7 +648,30 @@ public class BlackjackGame implements Runnable {
 			}
 			break;
 		case "winner":
+			if (dealerTotal > playerTotal) {
+				System.out.println("The dealer wins");
+				money -= bet;
+			} else if (playerTotal > dealerTotal) {
+				System.out.println("You win");
+				money += bet * payOutPercent;
+				gamesWon++;
+			} else if (dealerTotal == playerTotal) {
+				System.out.println("The you and the dealer pushed");
+			}
 
+			break;
+		case "blackjack":
+			hitOption = true;
+
+			if (dealerTotal == 21) {
+				System.out.println("The dealer has blackjack");
+				hitOption = false;
+			}
+
+			if (playerTotal == 21) {
+				System.out.println("The dealer has blackjack");
+				hitOption = false;
+			}
 			break;
 		}
 
