@@ -94,7 +94,7 @@ public class BlackjackGame implements Runnable {
 		do {
 			REDO = true;
 			create();
-			//shuffle();
+			// shuffle();
 			setDisplayNames();
 			resetVariables();
 
@@ -386,6 +386,7 @@ public class BlackjackGame implements Runnable {
 		bet = 0;
 		totalGames++;
 
+		// Gets the player's bet
 		System.out.println("\fWelcome to the Blackjack Table. Here, the minimum bet is $" + minBet);
 		System.out.println("Your Info:  $" + money + "  Wins: " + gamesWon + "/" + totalGames);
 
@@ -408,50 +409,51 @@ public class BlackjackGame implements Runnable {
 				REDO = true;
 			}
 		} while (REDO);
-		
-		// the dealers cards are card 1 & 2 and players are  3 & 4 and are drawn after
+
+		// Starts the game
+		// The dealers cards are card #1 & #2 and players are #3 & #4 and are
+		// drawn after
 		playerTotal = cardValue[index + 3] + cardValue[index + 4];
 		index += 2;
 		playerCardNum += 2;
-		
-		//Checks for player's double Aces
-		if (playerTotal > 21) {
 
+		// Checks for player's double Aces
+		if (playerTotal > 21) {
 			for (int i = playerCardNum, count = 1; i > 0 && count > 0; i--) {
 
 				if (cardValue[i] == 11) {
 					cardValue[i] = 1;
-					playerTotal = cardValue[index + 1] + cardValue[index + 2];
+					playerTotal = cardValue[index - 1] + cardValue[index];
 					count--;
 				}
 			}
 		}
-		
-		System.out.println("\fYou are dealed the " + cardDisplayName[index + 1] + " & the " + cardDisplayName[index + 2]);
+
+		System.out.println("\fYou are dealed the " + cardDisplayName[index - 1] + " & the " + cardDisplayName[index]);
 		System.out.println("Your total is: " + playerTotal);
-		
-		//Checks for dealer's double Aces
-				if (dealerTotal > 21) {
 
-					for (int i = dealerCardNum + 2, count = 1; i > 2 && count > 0; i--) {
-
-						if (cardValue[i] == 11) {
-							cardValue[i] = 1;
-							count--;
-						}
-					}
-				}
-				
-		System.out.println("\nThe dealer is showing the " + cardDisplayName[index++] + " & a hidden card");
-		dealerTotal = cardValue[index++] + cardValue[index + 2];
-
-		if (debugMode) {
-			System.out.print(" (" + cardDisplayName[index + 2] + ")");
-			System.out.println("The dealers total is: " + dealerTotal);
-		}
-
+		// Checks for dealer's double Aces
+		dealerTotal = cardValue[index + 1] + cardValue[index + 2];
 		index += 2;
 		dealerCardNum += 2;
+
+		if (dealerTotal > 21) {
+			for (int i = dealerCardNum + 2, count = 1; i > 2 && count > 0; i--) {
+
+				if (cardValue[i] == 11) {
+					cardValue[i] = 1;
+					dealerTotal = cardValue[index - 1] + cardValue[index];
+					count--;
+				}
+			}
+		}
+
+		System.out.println("\nThe dealer is showing the " + cardDisplayName[index - 1] + " & a hidden card");
+
+		if (debugMode) {
+			System.out.print(" (" + cardDisplayName[index] + ")");
+			System.out.println("The dealers total is: " + dealerTotal);
+		}
 
 		do {
 			int selection = 0;
@@ -604,26 +606,16 @@ public class BlackjackGame implements Runnable {
 
 			// Player bust
 			// Deals with Aces
-			do {
-				recheck = false;
-				playerBust = false;
+			if (playerTotal > 21) {
+				for (int i = playerCardNum + 2, count = 1; i > 2 && count > 0; i--) {
 
-				if (playerTotal > 21) {
-
-					for (int i = playerCardNum, count = 0; i > 0; i--) {
-
-						if (count >= 1) {
-							recheck = true;
-							break;
-						}
-
-						if (cardValue[i] == 11) {
-							cardValue[i] = 1;
-							count++;
-						}
+					if (cardValue[i] == 11) {
+						cardValue[i] = 1;
+						playerTotal = cardValue[index - 1] + cardValue[index];
+						count--;
 					}
 				}
-			} while (recheck);
+			}
 
 			if (playerTotal > 21) {
 				playerBust = true;
@@ -634,28 +626,21 @@ public class BlackjackGame implements Runnable {
 			}
 
 			// Dealer Bust
-			do {
-				recheck = false;
-				dealerBust = false;
-
 				if (dealerTotal > 21) {
 
-					for (int i = dealerCardNum, count = 0; i > 0; i--) {
-
-						if (count >= 1) {
-							recheck = true;
-							break;
-						}
+					for (int i = dealerCardNum, count = 1; i > 2 && count > 0; i--) {
 
 						if (i <= 2) {
-							if (cardValue[(index - playerCardNum) - i] == 11) {
-								cardValue[(index - playerCardNum) - i] = 1;
+							if (cardValue[(index - (playerCardNum + i + (dealerCardNum - 2)))] == 11) {
+								cardValue[(index - (playerCardNum + i + (dealerCardNum - 2)))] = 1;
+								////////////*****dealerTotal = cardValue[index - 1] + cardValue[index];
 								count++;
 							}
 						} else if (i >= 3) {
-							if (cardValue[(index - dealerCardNum) - i] == 11) {
-								cardValue[(index - playerCardNum) - i] = 1;
-								count++;
+							if (cardValue[index - (dealerCardNum - i)] == 11) {
+								cardValue[index - (dealerCardNum - i)] = 1;
+								dealerTotal = cardValue[index - (dealerCardNum + playerCardNum) + 1] + cardValue[index - (dealerCardNum + playerCardNum) + 2];
+								count--;
 							}
 						}
 
@@ -665,7 +650,6 @@ public class BlackjackGame implements Runnable {
 						}
 					}
 				}
-			} while (recheck);
 
 			if (dealerTotal > 21) {
 				dealerBust = true;
