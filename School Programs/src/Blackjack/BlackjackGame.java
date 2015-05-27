@@ -408,18 +408,45 @@ public class BlackjackGame implements Runnable {
 				REDO = true;
 			}
 		} while (REDO);
-		// the dealers cards are card 1 & 2 and players are drawn after
-		System.out.println("\fYou are dealed the " + cardDisplayName[index + 3] + " & the " + cardDisplayName[index + 4]);
-		System.out.println("Your total is: " + (cardValue[index + 3] + cardValue[index + 4]));
+		
+		// the dealers cards are card 1 & 2 and players are  3 & 4 and are drawn after
 		playerTotal = cardValue[index + 3] + cardValue[index + 4];
 		index += 2;
 		playerCardNum += 2;
+		
+		//Checks for player's double Aces
+		if (playerTotal > 21) {
 
-		System.out.println("\nThe dealer is showing the " + cardDisplayName[index - 1] + " & a hidden card");
-		dealerTotal = cardValue[index - 1] + cardValue[index];
+			for (int i = playerCardNum, count = 1; i > 0 && count > 0; i--) {
+
+				if (cardValue[i] == 11) {
+					cardValue[i] = 1;
+					playerTotal = cardValue[index + 1] + cardValue[index + 2];
+					count--;
+				}
+			}
+		}
+		
+		System.out.println("\fYou are dealed the " + cardDisplayName[index + 1] + " & the " + cardDisplayName[index + 2]);
+		System.out.println("Your total is: " + playerTotal);
+		
+		//Checks for dealer's double Aces
+				if (dealerTotal > 21) {
+
+					for (int i = dealerCardNum + 2, count = 1; i > 2 && count > 0; i--) {
+
+						if (cardValue[i] == 11) {
+							cardValue[i] = 1;
+							count--;
+						}
+					}
+				}
+				
+		System.out.println("\nThe dealer is showing the " + cardDisplayName[index++] + " & a hidden card");
+		dealerTotal = cardValue[index++] + cardValue[index + 2];
 
 		if (debugMode) {
-			System.out.print(" (" + cardDisplayName[index] + ")");
+			System.out.print(" (" + cardDisplayName[index + 2] + ")");
 			System.out.println("The dealers total is: " + dealerTotal);
 		}
 
