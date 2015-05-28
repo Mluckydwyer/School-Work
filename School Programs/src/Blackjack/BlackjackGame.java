@@ -36,7 +36,7 @@ public class BlackjackGame implements Runnable {
 	private int playerCardNum = 0;
 	private int dealerCardNum = 0;
 
-	private boolean debugMode = true; // Enables debug mode
+	private boolean debugMode = false; // Enables debug mode
 	private boolean running = false; // Tells if threads are running
 
 	// set up the arrays
@@ -89,32 +89,24 @@ public class BlackjackGame implements Runnable {
 		int selection;
 		boolean REDO;
 
-		selection = mainMenu();
-
 		do {
 			REDO = true;
-			create();
-			// shuffle();
-			setDisplayNames();
-			resetVariables();
 
+			selection = mainMenu();
+			
 			switch (selection) {
 			case 1:
+				create();
+				shuffle();
+				setDisplayNames();
+				resetVariables();
 				REDO = play();
 				break;
 			case 2:
-				settings();
-				REDO = true;
-				break;
-			case 3:
-				playerStats();
-				REDO = true;
-				break;
-			case 4:
 				stop();
 				break;
 			default:
-				System.out.println("An Error Has Occured, please try again\n");
+				System.out.println("An Error Has Occured, Please Try Again\n");
 				REDO = true;
 				break;
 			}
@@ -342,9 +334,7 @@ public class BlackjackGame implements Runnable {
 			try {
 				System.out.println("\fWelcome to Blackjack, please select an option from the menu below");
 				System.out.println("[1]-Play Blackjack");
-				System.out.println("[2]-Settings");
-				System.out.println("[3]-Player Stats");
-				System.out.println("[4]-Quit");
+				System.out.println("[2]-Quit");
 				selection = keyboardInputInt.nextInt();
 
 				if (selection > 4 || selection < 1)
@@ -360,26 +350,6 @@ public class BlackjackGame implements Runnable {
 		return selection;
 	}
 
-	/*
-	 * This will handle the player achievements menu and display a screen where
-	 * the player can see there wins to loses and money
-	 */
-	private void playerStats() {
-		// TODO Auto-generated method stub
-
-	}
-
-	/*
-	 * This will handle the setting menu and all the things the user can change
-	 */
-	private void settings() {
-		// TODO Auto-generated method stub
-
-	}
-
-	/*
-	 * 
-	 */
 	private boolean play() {
 		boolean REDO;
 		boolean REPLAY = false;
@@ -413,7 +383,7 @@ public class BlackjackGame implements Runnable {
 		// Starts the game
 		// The dealers cards are card #1 & #2 and players are #3 & #4 and are
 		// drawn after
-		playerTotal = cardValue[index + 3] + cardValue[index + 4];
+		playerTotal = cardValue[index + 1] + cardValue[index + 2];
 		index += 2;
 		playerCardNum += 2;
 
@@ -431,6 +401,7 @@ public class BlackjackGame implements Runnable {
 
 		System.out.println("\fYou are dealed the " + cardDisplayName[index - 1] + " & the " + cardDisplayName[index]);
 		System.out.println("Your total is: " + playerTotal);
+		checkWin("blackjack");
 
 		// Checks for dealer's double Aces
 		dealerTotal = cardValue[index + 1] + cardValue[index + 2];
@@ -530,10 +501,10 @@ public class BlackjackGame implements Runnable {
 	 */
 	private void hit() {
 		index++;
-		System.out.print("\fYou are dealed the " + cardDisplayName[index] + " Along with your ");
+		System.out.print("\fYou are dealed the " + cardDisplayName[index] + " along with your ");
 
 		for (int i = playerCardNum; i > 0; i--) {
-			System.out.print(cardDisplayName[index - i]);
+			System.out.print(cardDisplayName[index - (i + 2)]);
 
 			if (i > 1) {
 				System.out.print(" & your ");
@@ -615,59 +586,66 @@ public class BlackjackGame implements Runnable {
 						count--;
 					}
 				}
+				
+				for (int x = playerCardNum; x > 2; x--) {
+					playerTotal += cardValue[index - ((dealerCardNum - 2) + x)];
+				}
 			}
 
 			if (playerTotal > 21) {
 				playerBust = true;
 				hitOption = false;
-				System.out.println("You busted, the dealer wins");
+				System.out.println("You busted, the dealer wins your $" + bet);
 				money -= bet;
-				System.out.println("You won $" + (bet * payOutPercent));
 			}
 
 			// Dealer Bust
-				if (dealerTotal > 21) {
+			if (dealerTotal > 21) {
 
-					for (int i = dealerCardNum, count = 1; i > 2 && count > 0; i--) {
+				for (int i = dealerCardNum, count = 1; i > 2 && count > 0; i--) {
 
-						if (i <= 2) {
-							if (cardValue[(index - (playerCardNum + i + (dealerCardNum - 2)))] == 11) {
-								cardValue[(index - (playerCardNum + i + (dealerCardNum - 2)))] = 1;
-								////////////*****dealerTotal = cardValue[index - 1] + cardValue[index];
-								count++;
-							}
-						} else if (i >= 3) {
-							if (cardValue[index - (dealerCardNum - i)] == 11) {
-								cardValue[index - (dealerCardNum - i)] = 1;
-								dealerTotal = cardValue[index - (dealerCardNum + playerCardNum) + 1] + cardValue[index - (dealerCardNum + playerCardNum) + 2];
-								count--;
-							}
-						}
-
-						if (cardValue[i] == 11) {
-							cardValue[i] = 1;
+					if (i <= 2) {
+						if (cardValue[(index - (playerCardNum + i + (dealerCardNum - 2)))] == 11) {
+							cardValue[(index - (playerCardNum + i + (dealerCardNum - 2)))] = 1;
+							dealerTotal = cardValue[index - 1] + cardValue[index];
 							count++;
 						}
+					} else if (i >= 3) {
+						if (cardValue[index - (dealerCardNum - i)] == 11) {
+							cardValue[index - (dealerCardNum - i)] = 1;
+							dealerTotal = cardValue[index - (dealerCardNum + playerCardNum) + 1] + cardValue[index - (dealerCardNum + playerCardNum) + 2];
+
+							for (int x = dealerCardNum; x > 2; x--) {
+								dealerTotal += cardValue[index - x];
+							}
+							count--;
+						}
+					}
+
+					if (cardValue[i] == 11) {
+						cardValue[i] = 1;
+						count++;
 					}
 				}
+			}
 
 			if (dealerTotal > 21) {
 				dealerBust = true;
 				hitOption = false;
-				System.out.println("The dealer busted, you win");
+				System.out.println("The dealer busted, you win $" + (bet * payOutPercent));
 				money += bet * payOutPercent;
 			}
 			break;
 		case "winner":
-			if (dealerTotal > playerTotal) {
-				System.out.println("The dealer wins");
+			if (dealerTotal > playerTotal && dealerTotal < 21) {
+				System.out.println("The dealer wins, you lost your $" + bet);
 				money -= bet;
-			} else if (playerTotal > dealerTotal) {
-				System.out.println("You win");
+			} else if (playerTotal > dealerTotal && playerTotal < 21) {
+				System.out.println("You win $" + (bet * payOutPercent));
 				money += bet * payOutPercent;
 				gamesWon++;
-			} else if (dealerTotal == playerTotal) {
-				System.out.println("The you and the dealer pushed");
+			} else if (dealerTotal == playerTotal && dealerTotal < 21 && playerTotal < 21) {
+				System.out.println("The you and the dealer pushed, no money changed hands");
 			}
 
 			break;
