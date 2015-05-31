@@ -6,6 +6,10 @@ import java.io.PrintWriter;
 import java.util.Random;
 import java.util.Scanner;
 
+/*
+ * Blackjack By MAtt Dwyer Period 6
+ */
+
 public class BlackjackGame implements Runnable {
 
 	// Set up the objects
@@ -36,7 +40,7 @@ public class BlackjackGame implements Runnable {
 	private int playerCardNum = 0;
 	private int dealerCardNum = 0;
 
-	private boolean debugMode = true; // Enables debug mode
+	private boolean debugMode = false; // Enables debug mode
 	private boolean running = false; // Tells if threads are running
 
 	// set up the arrays
@@ -89,7 +93,6 @@ public class BlackjackGame implements Runnable {
 	public void run() {
 		int selection;
 		boolean REDO;
-		boolean threadRunning = true;
 
 		// Calls the main menu and gets the user's choice
 		selection = mainMenu();
@@ -471,13 +474,14 @@ public class BlackjackGame implements Runnable {
 					}
 				}
 			}
-
+		} while (REDO);
+		
+			if (playerTotal <= 21)
 			dealer();
+			
 			checkWin("bust");
 			checkWin("blackjack");
 			checkWin("winner");
-
-		} while (REDO);
 
 		// After the game, this sees if the player wants to play again
 		do {
@@ -526,6 +530,8 @@ public class BlackjackGame implements Runnable {
 		}
 		playerCardNum++;
 		playerTotal += cardValue[index];
+		
+		if (playerTotal <= 21)
 		System.out.println("\nYour total is: " + playerTotal);
 	}
 
@@ -603,7 +609,11 @@ public class BlackjackGame implements Runnable {
 				for (int x = playerCardNum; x > 2; x--) {
 					playerTotal += cardValue[index - ((dealerCardNum - 2) + x)];
 				}
+				
+				System.out.println("\nYour total is: " + playerTotal);
 			}
+			
+			
 
 			if (playerTotal > 21) {
 				playerBust = true;
@@ -645,7 +655,7 @@ public class BlackjackGame implements Runnable {
 			if (dealerTotal > 21) {
 				dealerBust = true;
 				hitOption = false;
-				System.out.println("\nThe dealer busted, you win $" + (bet * payOutPercent));
+				System.out.println("\nThe dealer busted, you win $" + (bet));
 				money += bet * payOutPercent;
 			}
 			break;
@@ -655,7 +665,7 @@ public class BlackjackGame implements Runnable {
 				money -= bet;
 				hitOption = false;
 			} else if (playerTotal > dealerTotal && playerTotal < 21) {
-				System.out.println("\nYou win " + playerTotal + " to " + dealerTotal + ", you also win $" + (bet * payOutPercent));
+				System.out.println("\nYou win " + playerTotal + " to " + dealerTotal + ", you also win $" + (bet));
 				money += bet * payOutPercent;
 				gamesWon++;
 				hitOption = false;
@@ -669,12 +679,15 @@ public class BlackjackGame implements Runnable {
 			hitOption = true;
 
 			if (dealerTotal == 21) {
-				System.out.println("\nThe dealer has blackjack");
+				System.out.println("\nThe dealer has blackjack and won your $" + bet);
+				money -= bet * payOutPercent;
 				hitOption = false;
 			}
 
 			if (playerTotal == 21) {
-				System.out.println("\nYou got blackjack");
+				System.out.println("\nYou got blackjack and won $" + bet);
+				money += bet * payOutPercent;
+				gamesWon++;
 				hitOption = false;
 			}
 			break;
