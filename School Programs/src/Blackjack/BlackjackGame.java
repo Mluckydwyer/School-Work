@@ -7,7 +7,7 @@ import java.util.Random;
 import java.util.Scanner;
 
 /*
- * Blackjack By MAtt Dwyer Period 6
+ * Blackjack By Matt Dwyer Period 6
  */
 
 public class BlackjackGame implements Runnable {
