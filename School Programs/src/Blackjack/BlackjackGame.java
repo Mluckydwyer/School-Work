@@ -40,7 +40,7 @@ public class BlackjackGame implements Runnable {
 	private int playerCardNum = 0;
 	private int dealerCardNum = 0;
 
-	private boolean debugMode = false; // Enables debug mode
+	private boolean debugMode = true; // Enables debug mode
 	private boolean running = false; // Tells if threads are running
 
 	// set up the arrays
@@ -590,10 +590,6 @@ public class BlackjackGame implements Runnable {
 
 		switch (type) {
 		case "bust":
-			boolean playerBust = false;
-			boolean dealerBust = false;
-			boolean recheck = false;
-
 			// Player bust
 			// Deals with Aces
 			if (playerTotal > 21) {
@@ -616,7 +612,6 @@ public class BlackjackGame implements Runnable {
 			
 
 			if (playerTotal > 21) {
-				playerBust = true;
 				hitOption = false;
 				System.out.println("\nYou busted, the dealer wins your $" + bet);
 				money -= bet;
@@ -653,7 +648,6 @@ public class BlackjackGame implements Runnable {
 			}
 
 			if (dealerTotal > 21) {
-				dealerBust = true;
 				hitOption = false;
 				System.out.println("\nThe dealer busted, you win $" + (bet));
 				money += bet * payOutPercent;
