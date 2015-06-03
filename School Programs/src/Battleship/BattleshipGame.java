@@ -40,7 +40,8 @@ public class BattleshipGame {
 		game.clearBoard();
 		
 		for (int x = 1; x < 6; x++) {
-			game.printBoard("playerShips");
+			game.printBoard();
+			
 			do {
 				
 				System.out.println("How would you like to orient your " + shipName[x] + " that is " + shipLength[x] + " spaces long?");
@@ -60,7 +61,13 @@ public class BattleshipGame {
 					System.out.println("what cordinates would you like the uper left corrner of your " + shipName[x] + " that is " + shipLength[x] + " spaces long to be in (x then y)?");
 					cordX = keyboardInt.nextInt();
 					cordY = keyboardInt.nextInt();
-					redo ^= game.checkShipPlacement(orientation, shipLength[x], cordX, cordY); // toggles the result, it does this because checkShip placement returns true if it is ok
+					redo = !game.checkShipPlacement(orientation, shipLength[x], cordX, cordY); // toggles the result, it does this because checkShip placement returns true if it is ok
+				}
+				
+				if (redo){
+					System.out.println("\f");
+					game.printBoard();
+					System.out.println("That isn't a valid loaction for that ship");
 				}
 				
 			} while (redo);
@@ -72,12 +79,20 @@ public class BattleshipGame {
 				if (orientation) playerShips[cordX + (shipLength[x] - i)][cordY] = true;
 				else if (!orientation) playerShips[cordX][cordY + (shipLength[x] - i)] = true;
 			}
+			
+			
+			
+			
+			
+			
+			
+			
 		}
 	}
 	
 	private boolean checkShipPlacement(boolean orin, int length, int cordX, int cordY) {
 		boolean valid = true;
-		
+		// orin is true for horizontal, false for vertical
 		if (cordX < 1) return false;
 		if (cordY < 1) return false;
 		
@@ -86,10 +101,8 @@ public class BattleshipGame {
 			if (cordY > 11) return false;
 		}
 		else if (!orin) {
-			if (orin) {
 				if (cordX > 11) return false;
 				if (cordY > 11 - length) return false;
-			}
 		}
 		return valid;
 	}
@@ -107,57 +120,43 @@ public class BattleshipGame {
 		}
 	}
 	
-	private void printBoard(String board) {
+	private void printBoard() {
 		String space = "ERROR";
 		
-		System.out.println("\tYour Ships");
-		System.out.println("   1 2 3 4 5 6 7 8 9 10");
+		System.out.println("\tYour Ships\t\tYour Hits");
+		System.out.println("   1 2 3 4 5 6 7 8 9 10\t   1 2 3 4 5 6 7 8 9 10");
 		
 		for (int y = 1; y < 11; y++) {
 			
-			if (y < 10) System.out.print(y + " ");
+			if (y < 10 || y < 20) System.out.print(y + " ");
 			else System.out.print(y);
 			
 			for (int x = 1; x < 11; x++) {
 				
-				switch (board) {
-					case "playerShips":
 						if (playerShips[x][y]) {
 							space = "O";
 						}
 						else if (!playerShips[x][y]) {
 							space = "+"; // ///////////////Change TEST Purposes
 						}
-						break;
-					case "cpuShips":
-						if (cpuShips[x][y]) {
-							space = "O";
-						}
-						else if (!cpuShips[x][y]) {
-							space = " ";
-						}
-						break;
-					case "playerHits":
-						if (playerHits[x][y]) {
-							space = "X";
-						}
-						else if (!playerHits[x][y]) {
-							space = " ";
-						}
-						break;
-					case "cpuHits":
-						if (cpuHits[x][y]) {
-							space = "X";
-						}
-						else if (!cpuHits[x][y]) {
-							space = " ";
-						}
-						break;
-				}
-				
-				if (x < 10) System.out.print(" " + space);
-				else if (x == 10) System.out.println(" " + space);
+						if (y == 10 && x == 10) System.out.print("" + space);
+						else if (y < 10) System.out.print(" " + space);
 			}
+			
+			System.out.print("\t" + y);
+			
+			for (int x = 1; x < 11; x++) {
+				
+				if (playerShips[x][y]) {
+					space = "O";
+				}
+				else if (!playerShips[x][y]) {
+					space = "+"; // ///////////////Change TEST Purposes
+				}
+				if (y == 10 && x == 10) System.out.print("" + space);
+				else if (y < 10) System.out.print(" " + space);
+			}
+			System.out.print("\n");
 		}
 	}
 	
