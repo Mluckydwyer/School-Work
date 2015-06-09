@@ -43,13 +43,13 @@ public class BattleshipGame {
 			shipName[4] = "Battleship";
 			shipName[5] = "Aircraft Carrier";
 
-			shipLength[1] = 2;// TESTTTTTTTTTTTTTTTTT
+			shipLength[1] = 2;
 			shipLength[2] = 3;
 			shipLength[3] = 3;
 			shipLength[4] = 4;
 			shipLength[5] = 5;
 
-			System.out.println("Hello and welcome to Batleship");
+			System.out.println("Hello and Welcome to Batleship");
 			game.clearBoard();
 			game.cpuShipPlacement();
 
@@ -77,7 +77,7 @@ public class BattleshipGame {
 					}
 
 					if (!redo) {
-						System.out.println("what cordinates would you like the uper left corrner of your " + shipName[x] + " that is " + shipLength[x] + " spaces long to be in (x then y)?");
+						System.out.println("What cordinates would you like the uper left corrner of your " + shipName[x] + " that is " + shipLength[x] + " spaces long to be in (x then y)?");
 						cordX = keyboardInt.nextInt();
 						cordY = keyboardInt.nextInt();
 						// toggles the result, it does this because checkShip
@@ -105,10 +105,7 @@ public class BattleshipGame {
 				}
 			}
 
-			game.cpuShipPlacement();
-
 			while (playerHitTotal < 17 && cpuHitTotal < 17) {
-				System.out.println("\f");
 
 				do {
 					redo = false;
@@ -117,38 +114,36 @@ public class BattleshipGame {
 					cordX = keyboardInt.nextInt();
 					cordY = keyboardInt.nextInt();
 
-					if (cordX > 10 || cordX < 1 || cordY > 10 || cordY > 1)
+					if (cordX > 10 || cordX < 1 || cordY > 10 || cordY < 1)
 						redo = true;
 
 					if (redo) {
 						System.out.println("\f");
 						game.printBoard();
-						System.out.println("That isn't a valid loaction for that ship");
+						System.out.println("That isn't a valid loaction");
 					}
 				} while (redo);
 				playerHits[cordX][cordY] = true;
 
 				if (cpuShips[cordX][cordY]) {
-					System.out.println("The you hit the CPU's battleship at (" + cordX + "," + cordY + ")");
+					System.out.println("\nYou hit the CPU's battleship at (" + cordX + "," + cordY + ")");
 					playerHitTotal++;
 				} else {
-					System.out.println("You missed at (" + cordX + "," + cordY + ")");
+					System.out.println("\nYou missed at (" + cordX + "," + cordY + ")");
 				}
 
 				if (playerHitTotal < 17 && cpuHitTotal < 17)
-					break;
-				else
 					game.cpuShot();
 			}
 
-			if (playerHitTotal < 17)
-				System.out.println("\fYou Won!!!");
-			else if (cpuHitTotal < 17)
-				System.out.println("\fLost Won!!!");
+			if (playerHitTotal == 17)
+				System.out.println("\nYou Won!!!");
+			else if (cpuHitTotal == 17)
+				System.out.println("\nYou Lost.");
 
 			do {
 				redo = false;
-				System.out.println("would you like to play again (1:Yes, 2:No)?");
+				System.out.println("Would you like to play again (1:Yes, 2:No)?");
 				choice = keyboardInt.nextInt();
 				
 				if (choice == 1) replay = true;
@@ -159,7 +154,7 @@ public class BattleshipGame {
 			} while (redo);
 			
 		} while (replay);
-		System.out.println("\f Thanks For Playing");
+		System.out.println("\fThanks For Playing");
 	}
 
 	private void cpuShot() {
@@ -260,7 +255,7 @@ public class BattleshipGame {
 	private void printBoard() {
 		String space = "ERROR";
 
-		System.out.println("\tYour Ships\t\tCPU Ships");
+		System.out.println("\n\tYour Ships\t\tCPU Ships");
 		System.out.println("   1 2 3 4 5 6 7 8 9 10\t   1 2 3 4 5 6 7 8 9 10");
 
 		for (int y = 1; y < 11; y++) {
@@ -271,13 +266,13 @@ public class BattleshipGame {
 				System.out.print(y);
 
 			for (int x = 1; x < 11; x++) {
-
-				if (playerShips[x][y]) {
-					space = "O";
+				
+				if (playerShips[x][y] && cpuHits[x][y]) {
+					space = "X";
 				} else if (!playerShips[x][y]) {
 					space = ".";
-				} else if (playerShips[x][y] && cpuHits[x][y]) {
-					space = "X";
+				} else if (playerShips[x][y]) {
+					space = "O";
 				}
 
 				if (y == 10 && x == 1)
@@ -291,12 +286,12 @@ public class BattleshipGame {
 			// purposes
 			for (int x = 1; x < 11; x++) {
 
-				if (cpuShips[x][y]) {
-					space = "O";
+				if (cpuShips[x][y] && playerHits[x][y]) {
+					space = "X";
 				} else if (!cpuShips[x][y]) {
 					space = ".";
-				} else if (cpuShips[x][y] && playerHits[x][y]) {
-					space = "X";
+				} else if (cpuShips[x][y]) {
+					space = "O";
 				}
 
 				if (y == 10 && x == 1)
