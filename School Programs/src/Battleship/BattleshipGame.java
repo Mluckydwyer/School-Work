@@ -3,6 +3,10 @@ package Battleship;
 import java.util.Random;
 import java.util.Scanner;
 
+/*
+ * Matt Dwyer Period 6 Final Battleship
+ */
+
 public class BattleshipGame {
 
 	// Creates the arrays 10x10 for the boards
@@ -145,14 +149,16 @@ public class BattleshipGame {
 				redo = false;
 				System.out.println("Would you like to play again (1:Yes, 2:No)?");
 				choice = keyboardInt.nextInt();
-				
-				if (choice == 1) replay = true;
-				else if (choice == 2) replay = false;	
-				else if (choice != 1 && choice != 2) redo = true;
-					
-					
+
+				if (choice == 1)
+					replay = true;
+				else if (choice == 2)
+					replay = false;
+				else if (choice != 1 && choice != 2)
+					redo = true;
+
 			} while (redo);
-			
+
 		} while (replay);
 		System.out.println("\fThanks For Playing");
 	}
@@ -255,7 +261,7 @@ public class BattleshipGame {
 	private void printBoard() {
 		String space = "ERROR";
 
-		System.out.println("\n\tYour Ships\t\tCPU Ships");
+		System.out.println("\n\tYour Ships\t\tYour Hits");
 		System.out.println("   1 2 3 4 5 6 7 8 9 10\t   1 2 3 4 5 6 7 8 9 10");
 
 		for (int y = 1; y < 11; y++) {
@@ -266,7 +272,7 @@ public class BattleshipGame {
 				System.out.print(y);
 
 			for (int x = 1; x < 11; x++) {
-				
+
 				if (playerShips[x][y] && cpuHits[x][y]) {
 					space = "X";
 				} else if (!playerShips[x][y]) {
@@ -282,15 +288,14 @@ public class BattleshipGame {
 			}
 
 			System.out.print("\t" + y);
-			// ///////////////////////Printing out CPU ships for testing
-			// purposes
+
 			for (int x = 1; x < 11; x++) {
 
 				if (cpuShips[x][y] && playerHits[x][y]) {
 					space = "X";
-				} else if (!cpuShips[x][y]) {
+				} else if (!playerHits[x][y]) {
 					space = ".";
-				} else if (cpuShips[x][y]) {
+				} else if (playerHits[x][y]) {
 					space = "O";
 				}
 
