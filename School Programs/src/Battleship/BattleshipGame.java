@@ -309,5 +309,4 @@ public class BattleshipGame {
 			System.out.print("\n");
 		}
 	}
-
 }
